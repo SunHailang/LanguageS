@@ -1,0 +1,15 @@
+##################
+*.csproj
+*.sln
+*.user
+*.vsconfig
+
+#####################
+/Library/
+/Builds/
+.vs/
+.vscode/
+/Temp/
+obj/
+/Logs/
+/Tools/Ignore/
