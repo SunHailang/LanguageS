@@ -7,6 +7,9 @@ using TMPro;
 public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [SerializeField]
+    private ScrollViewDirection m_scrollviewDir;
+
+    [SerializeField]
     private RectTransform m_inputKnob;
     [SerializeField]
     private TextMeshProUGUI m_directionText;
@@ -128,6 +131,8 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         else if (angle > (270.0f + 22.5f) && angle <= (360.0f - 22.5f))
             angleStr = "EN";
 
-        m_directionText.text = string.Format("{0}:{1:F1}", angleStr, angle);
+        m_directionText.text = string.Format("{0}:{1:F1}°", angleStr, angle);
+
+        m_scrollviewDir.ResetDirection(angle);
     }
 }
