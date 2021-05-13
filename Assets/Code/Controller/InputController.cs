@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine.UI;
+using System;
 
 public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
@@ -13,24 +15,63 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     private RectTransform m_inputKnob;
     [SerializeField]
     private TextMeshProUGUI m_directionText;
+    [SerializeField]
+    private Button m_jumpButton;
+    [SerializeField]
+    private TextMeshProUGUI m_pickE;
 
     private Vector3 m_perMoveDirection = Vector3.forward;
     private Vector3 playerMoveDirection = Vector3.zero;
 
     private const float m_maxSpeed = 125.0f;
+    private bool m_startDrag = false;
+
+    private void Awake()
+    {
+        // regist event
+        EventManager<Events>.Instance.RegisterEvent(Events.PickType, OnPickShow);
+        m_jumpButton.onClick.AddListener(BtnJump_OnClick);
+    }
+    private void OnDestroy()
+    {
+        // deregist event
+        EventManager<Events>.Instance.DeregisterEvent(Events.PickType, OnPickShow);
+    }
+    private Collider[] m_colliders = null;
+    private void OnPickShow(Events arg1, object[] arg2)
+    {
+        if (arg2 != null && arg2.Length > 0)
+        {
+            m_colliders = arg2 as Collider[];
+            m_pickE.text = "E";
+            m_pickE.gameObject.SetActive(true);
+        }
+        else
+        {
+            m_colliders = null;
+            m_pickE.gameObject.SetActive(false);
+        }
+    }
 
     private void OnEnable()
     {
         m_inputKnob.anchoredPosition = Vector3.zero;
     }
 
+    private void Start()
+    {
+        SetDirection(m_perMoveDirection);
+    }
+
     public void OnPointerDown(PointerEventData eventData)
     {
+        m_startDrag = true;
         SetPosition(eventData, m_inputKnob);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        m_startDrag = false;
         m_inputKnob.localPosition = Vector3.zero;
 
         playerMoveDirection = Vector3.zero;
@@ -38,6 +79,7 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        m_startDrag = true;
         SetPosition(eventData, m_inputKnob);
     }
 
@@ -48,6 +90,7 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        m_startDrag = false;
         m_inputKnob.localPosition = Vector3.zero;
 
         playerMoveDirection = Vector3.zero;
@@ -55,12 +98,38 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     private void Update()
     {
-        if (playerMoveDirection != Vector3.zero)
+        if (Input.GetKeyDown(KeyCode.E) && m_colliders != null)
+        {
+            for (int i = 0; i < m_colliders.Length; i++)
+            {
+                Destroy(m_colliders[i].gameObject);
+            }
+        }
+
+        if (!m_startDrag)
+        {
+            Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), playerMoveDirection.z);
+            playerMoveDirection = moveDir;
+        }
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            playerMoveDirection.z = 1.0f;
+        }
+
+        if (playerMoveDirection.x != 0.0f || playerMoveDirection.y != 0.0f)
         {
             m_perMoveDirection = playerMoveDirection;
             SetDirection(m_perMoveDirection);
         }
         PlayerController.Instance.SetPlayerMoveDirection(playerMoveDirection);
+        playerMoveDirection.z = 0.0f;
+    }
+
+    private void BtnJump_OnClick()
+    {
+        Debug.Log("BtnJump_OnClick");
+        playerMoveDirection.z = 1.0f;
     }
 
     private void SetPosition(PointerEventData eventData, RectTransform rect)

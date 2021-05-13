@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,10 +20,11 @@ public class PlayerController : MonoBehaviour
     private float jumpValue = -2.8f;
 
     public event System.Action<bool, bool> onPlayerAnimatorEvent;
-
-    public event System.Action<Vector3> onPlayerMoveDirectionEvent;
+    public event System.Action<SkillActionType> onPlayerSkillEvent;
 
     private Vector3 m_moveDirection = Vector3.zero;
+    private SkillActionType m_playerSkill = SkillActionType.None;
+
 
     private void Awake()
     {
@@ -28,12 +32,31 @@ public class PlayerController : MonoBehaviour
         Instance = this;
 
         m_controller = GetComponent<CharacterController>();
+
+        // Regiest Events
+
+    }
+
+    private void Start()
+    {
+        
+    }
+
+    private void OnlayerSkillEvent(SkillActionType type)
+    {
+
     }
 
     public void SetPlayerMoveDirection(Vector3 direction)
     {
+        if (m_playerSkill != SkillActionType.None)
+        {
+            m_moveDirection = Vector3.zero;
+            return;
+        }
+
         m_moveDirection.x = direction.x;
-        m_moveDirection.y = 0;
+        m_moveDirection.y = direction.z;
         m_moveDirection.z = direction.y;
     }
 
@@ -47,19 +70,20 @@ public class PlayerController : MonoBehaviour
             playerVelocity.y = 0f;
         }
 
-        Vector3 move = m_moveDirection;//new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        Vector3 move = new Vector3(m_moveDirection.x, 0, m_moveDirection.z);
         m_controller.Move(move * Time.deltaTime * playerSpeed);
 
-
-        bool running = Mathf.Abs(Vector3.Distance(move, Vector3.zero)) > 0;
+        //float distance = Vector3.Distance();
+        bool running = move != Vector3.zero;
         if (move != Vector3.zero)
             gameObject.transform.forward = move.normalized;
 
         // Changes the height position of the player..
-        if (Input.GetButtonDown("Jump") && groundedPlayer)
+        if (m_moveDirection.y > 0 && groundedPlayer)
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * jumpValue * gravityValue);
             jump = true;
+            m_moveDirection.y = 0;
         }
 
         onPlayerAnimatorEvent?.Invoke(running, jump);
