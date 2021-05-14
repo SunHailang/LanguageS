@@ -6,31 +6,23 @@ public class PlayerTriggerController : MonoBehaviour
 {
     private void Update()
     {
-        float checkDistance = 1.0f;
+        float checkDistance = 0.85f;
         Collider[] colliders = Physics.OverlapSphere(transform.position, checkDistance, 1 << 8);
         EventManager<Events>.Instance.TriggerEvent(Events.PickType, colliders);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        ActionEvent action = other.gameObject.GetComponent<ActionEvent>();
-        if (action != null)
+        if (other != null)
         {
-            switch (action.actionType)
+            switch (other.tag)
             {
-                case SkillActionType.PickType:
+                case "Enemy":
+                    ActionEvent[] actions = other.gameObject.GetComponents<ActionEvent>();
+                    EventManager<Events>.Instance.TriggerEvent(Events.HurtType, actions);
+                    Destroy(other.gameObject);
                     break;
             }
         }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-
     }
 }

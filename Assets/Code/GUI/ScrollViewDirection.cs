@@ -26,13 +26,13 @@ public class ScrollViewDirection : MonoBehaviour, IBeginDragHandler, IDragHandle
     {
         m_directionItems.Clear();
 
-        m_centerX = m_scrollview.sizeDelta.x / 2 - 5.5f / 2;
+        m_centerX = m_scrollview.rect.width / 2 - 5.5f / 2;
 
         for (int i = 0; i < 360; i++)
         {
             m_directionItems.Add(i);
         }
-        int count = Mathf.RoundToInt(m_scrollview.sizeDelta.x / m_spacing) + 1;
+        int count = Mathf.RoundToInt(m_scrollview.rect.width / m_spacing) + 1;
         if (count % 2 == 0) count++;
         for (int i = 0; i < count; i++)
         {
@@ -99,8 +99,6 @@ public class ScrollViewDirection : MonoBehaviour, IBeginDragHandler, IDragHandle
         m_angleValue = Mathf.FloorToInt(m_targetAngle);
         m_angleDecimalValue = m_targetAngle - m_angleValue;
         m_scrollState = angleValue > 0;
-        //Debug.Log($"m_targetAngle::{m_targetAngle}, m_perTargetAngle::{m_perTargetAngle}, BoolStep::{m_angleStep}");
-        //Debug.Log($"angleValue Befor::{angleValue}, Total After::{m_total}");
     }
 
     private bool GetAngleRed(float target, float per, out float angleValue)
@@ -133,23 +131,24 @@ public class ScrollViewDirection : MonoBehaviour, IBeginDragHandler, IDragHandle
 
         Transform transValue = m_scrollviewContent.transform.Find($"{m_angleValue}");
         float nextValue = -1f;
+        float valueDir = (m_angleStep ? 1.0f : -1.0f);
         if (transValue != null)
         {
-            nextValue = Mathf.Abs(m_centerX - transValue.localPosition.x);
+            nextValue = Mathf.Abs(m_centerX - (transValue.localPosition.x + (m_angleDecimalValue * (m_spacing + 5.5f))));
         }
         float deltaX = 0;
         if (nextValue < 0)
-            deltaX = Mathf.Lerp(0, m_centerX, 0.026f);
+            deltaX = Mathf.Lerp(0, m_centerX, 0.0285f);
         else
             deltaX = Mathf.Lerp(0, nextValue, 0.027f);
 
         nextValue = nextValue > 0 ? nextValue : deltaX;
-        if (nextValue <= 2f)
+        if (nextValue <= 0.2f)
         {
-            deltaX = nextValue + m_angleDecimalValue * (m_spacing + 5.5f);
+            deltaX = nextValue;// + m_angleDecimalValue * (m_spacing + 5.5f);
             m_scrollState = false;
         }
-        deltaX *= (m_angleStep ? 1.0f : -1.0f);
+        deltaX *= valueDir;
 
         float posX = 100;
         for (int i = 0; i < m_items.Count; i++)
@@ -172,7 +171,7 @@ public class ScrollViewDirection : MonoBehaviour, IBeginDragHandler, IDragHandle
         RectTransform first = m_scrollviewContent.GetChild(0).GetComponent<RectTransform>();
         RectTransform end = m_scrollviewContent.GetChild(m_scrollviewContent.childCount - 1).GetComponent<RectTransform>();
 
-        if (end.localPosition.x < m_scrollview.sizeDelta.x)
+        if (end.localPosition.x < m_scrollview.rect.width)
         {
             float x = end.localPosition.x + m_spacing + 5f;
             first.localPosition = new Vector3(x, 0, 0);

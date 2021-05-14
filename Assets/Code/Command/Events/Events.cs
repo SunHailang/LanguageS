@@ -6,4 +6,5 @@ public enum Events
 {
     None,
     PickType,
+    HurtType,
 }

@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 m_moveDirection = Vector3.zero;
     private SkillActionType m_playerSkill = SkillActionType.None;
 
+    private bool m_isDeath = false;
+    public bool IsDeath { get { return m_isDeath; } }
 
     private void Awake()
     {
@@ -33,23 +35,17 @@ public class PlayerController : MonoBehaviour
 
         m_controller = GetComponent<CharacterController>();
 
-        // Regiest Events
-
+        // Regiester Events
     }
 
-    private void Start()
+    public void Death()
     {
-        
-    }
-
-    private void OnlayerSkillEvent(SkillActionType type)
-    {
-
+        m_isDeath = true;
     }
 
     public void SetPlayerMoveDirection(Vector3 direction)
     {
-        if (m_playerSkill != SkillActionType.None)
+        if (m_playerSkill != SkillActionType.None || m_isDeath)
         {
             m_moveDirection = Vector3.zero;
             return;
@@ -84,6 +80,8 @@ public class PlayerController : MonoBehaviour
             playerVelocity.y += Mathf.Sqrt(jumpHeight * jumpValue * gravityValue);
             jump = true;
             m_moveDirection.y = 0;
+            // magic
+            PlayerData.Instance.SetPlayerData(ReplyType.Magic, -0.1f);
         }
 
         onPlayerAnimatorEvent?.Invoke(running, jump);
