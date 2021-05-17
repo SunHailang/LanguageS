@@ -23,6 +23,8 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     private TextMeshProUGUI m_pickE;
     [SerializeField]
     private Button m_btnE;
+    [SerializeField]
+    private Button m_btnSetting;
 
     private Vector3 m_perMoveDirection = Vector3.forward;
     private Vector3 playerMoveDirection = Vector3.zero;
@@ -30,19 +32,29 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     private const float m_maxSpeed = 125.0f;
     private bool m_startDrag = false;
 
+    private bool m_isDeath = false;
+
     private void Awake()
     {
         // regist event
         EventManager<Events>.Instance.RegisterEvent(Events.PickType, OnPickShow);
+        EventManager<Events>.Instance.RegisterEvent(Events.PlayerLifeState, OnPlayerLifeState);
 
         m_btnJump.onClick.AddListener(BtnJump_OnClick);
         m_btnE.onClick.AddListener(BtnE_OnClick);
+        m_btnSetting.onClick.AddListener(() =>
+        {
+            UIController.Instance.Open<GameEndPopup>("GameEndPopup", UILevel.PanelLevel);
+        });
     }
+
     private void OnDestroy()
     {
         // deregist event
         EventManager<Events>.Instance.DeregisterEvent(Events.PickType, OnPickShow);
+        EventManager<Events>.Instance.DeregisterEvent(Events.PlayerLifeState, OnPlayerLifeState);
     }
+
     private Collider[] m_colliders = null;
     private void OnPickShow(Events arg1, object[] arg2)
     {
@@ -60,6 +72,16 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
             m_pickE.gameObject.SetActive(false);
             m_btnE.interactable = false;
             m_btnE.image.sprite = m_btnE.spriteState.disabledSprite;
+        }
+    }
+
+    private void OnPlayerLifeState(Events arg1, object[] arg2)
+    {
+        m_isDeath = !Convert.ToBoolean(arg2[0]);
+        if (m_isDeath)
+        {
+            // Show Death UI
+            UIController.Instance.Open<GameEndPopup>("GameEndPopup", UILevel.PanelLevel);
         }
     }
 
@@ -108,24 +130,15 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     private void Update()
     {
-        if (IsDeath()) return;
+        if (Input.GetKeyDown(KeyCode.Escape)) UIController.Instance.Open<QuitGame>("QuitGame", UILevel.PanelLevel);
+        if (Input.GetKeyDown(KeyCode.E) && m_colliders != null) PickE();
 
-        if (Input.GetKeyDown(KeyCode.E) && m_colliders != null)
-        {
-            PickE();
-        }
+        if (!m_startDrag && !IsDeath())
+            playerMoveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), playerMoveDirection.z);
 
-        if (!m_startDrag)
-        {
-            Vector3 moveDir = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), playerMoveDirection.z);
-            playerMoveDirection = moveDir;
-        }
+        if (Input.GetButtonDown("Jump")) JumpSpace();
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            JumpSpace();
-        }
-
+        if (IsDeath()) playerMoveDirection = Vector3.zero;
         if (playerMoveDirection.x != 0.0f || playerMoveDirection.y != 0.0f)
         {
             m_perMoveDirection = playerMoveDirection;
@@ -137,7 +150,7 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     private void JumpSpace()
     {
-        if (PlayerData.Instance.playerMagic < 0.1f)
+        if (IsDeath() || PlayerData.Instance.playerMagic < 0.1f)
         {
             return;
         }
@@ -155,6 +168,7 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     private void PickE()
     {
+        if (IsDeath()) return;
         ActionEvent[] actions = new ActionEvent[m_colliders.Length];
         for (int i = 0; i < actions.Length; i++)
         {
@@ -248,7 +262,7 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     private bool IsDeath()
     {
-        if (PlayerController.Instance.IsDeath)
+        if (m_isDeath)
         {
             m_inputKnob.localPosition = Vector3.zero;
             playerMoveDirection = Vector3.zero;

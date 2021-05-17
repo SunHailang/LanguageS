@@ -5,6 +5,9 @@ using UnityEngine;
 public enum Events
 {
     None,
+
+    PlayerLifeState,
+
     PickType,
     HurtType,
 }

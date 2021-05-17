@@ -21,7 +21,7 @@ public class ScrollViewItem : MonoBehaviour
         if (value % 5 == 0)
         {
             gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(5.5f, 110.0f);
-            if (value % 45 == 0)
+            if (value % 15 == 0)
             {
                 m_text.text = $"{value}°";
                 m_text.gameObject.SetActive(true);

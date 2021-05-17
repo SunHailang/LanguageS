@@ -41,14 +41,21 @@ public class PlayerController : MonoBehaviour
     public void Death()
     {
         m_isDeath = true;
+        EventManager<Events>.Instance.TriggerEvent(Events.PlayerLifeState, !m_isDeath);
+    }
+    public void Rebirth()
+    {
+        m_isDeath = false;
+        PlayerData.Instance.SetPlayerData(ReplyType.Blood, 1.0f);
+        PlayerData.Instance.SetPlayerData(ReplyType.Magic, 1.0f);
+        EventManager<Events>.Instance.TriggerEvent(Events.PlayerLifeState, !m_isDeath);
     }
 
     public void SetPlayerMoveDirection(Vector3 direction)
     {
         if (m_playerSkill != SkillActionType.None || m_isDeath)
         {
-            m_moveDirection = Vector3.zero;
-            return;
+            direction = Vector3.zero;
         }
 
         m_moveDirection.x = direction.x;

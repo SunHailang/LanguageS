@@ -23,7 +23,7 @@ public class SliderValueAnimation : MonoBehaviour
     private void Update()
     {
         float v = Mathf.Abs(m_targetValue - m_slider.value);
-        float a = Mathf.Pow(v, 1.8f) + (v < 0.02f ? 0.02f - v : 0.02f) + 0.005f;
+        float a = Mathf.Pow(v, 1.8f) + (v < 0.02f ? 0.02f - v : v > 0.03 ? v : 0.02f) + 0.005f;
         if (v < 0.005f) a = 1.0f;
         m_slider.value = Mathf.Lerp(m_slider.value, m_targetValue, a);
     }
