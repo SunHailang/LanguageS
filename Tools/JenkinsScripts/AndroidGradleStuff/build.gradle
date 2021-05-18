@@ -1,0 +1,126 @@
+import java.text.SimpleDateFormat
+
+apply plugin: 'com.android.application'
+
+buildscript {
+    repositories {
+		google()
+        jcenter()
+    }
+    dependencies {
+		classpath 'com.android.tools.build:gradle:3.3.2'
+		classpath 'com.google.gms:google-services:2.1.0'
+    }
+} 
+
+allprojects {
+    repositories {
+		google()
+		jcenter()
+		mavenCentral()
+    }
+}
+
+
+// auto version add
+ext.defVersionName = "1.3.0"  // the previous is 4.2.0
+ext.defVersionCode = 1       // the previous is 102
+ext.defTargetSdkVersion = 28
+
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        applicationId "com.langs.hsw"
+        minSdkVersion 17
+        targetSdkVersion defTargetSdkVersion
+		versionCode defVersionCode
+		versionName "${defVersionName}"
+		ndk {
+            abiFilters "armeabi-v7a", "arm-v64"
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            java.srcDirs = ['src/main/java']
+            resources.srcDirs = ['src/main/java']
+            res.srcDirs = ['src/main/res']
+            assets.srcDirs = ['src/main/assets']
+			jni.srcDirs = []
+			jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
+	
+	dexOptions {
+		javaMaxHeapSize "4g"
+	}
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JavaVersion.VERSION_1_8
+	}
+	
+	signingConfigs {
+        debug {
+			storeFile file("fgol.keystore")
+			storePassword "ubi123"
+			keyAlias "ubisha"
+			keyPassword "ubi123"
+        }
+        release {
+			storeFile file("fgol.keystore")
+			storePassword "ubi123"
+			keyAlias "ubisha"
+			keyPassword "ubi123"
+        }
+    }
+	 
+    buildTypes {
+		debug {
+            debuggable true
+			minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+			signingConfig signingConfigs.debug
+		}
+        release {
+            debuggable false
+			minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+			signingConfig signingConfigs.release
+        }
+    }
+	
+	//这里是构建apk包的地方了，fileName就是我们构建的apk的名字了。  3.0.0 以上
+	android.applicationVariants.all { variant ->
+		variant.outputs.all {
+			outputFileName = "HSW_${defaultConfig.versionName}_${defaultConfig.versionCode}.apk"
+		}
+	}
+	
+	packagingOptions {
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude '.readme'
+    }
+	
+	lintOptions{
+		abortOnError false
+	}
+	
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+
+dependencies {
+    api fileTree(dir: 'libs', include: '*.jar')
+	api fileTree(dir: 'libs', include: '*.aar')
+}

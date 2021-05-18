@@ -1,0 +1,542 @@
+-verbose
+-dontpreverify
+-dontobfuscate
+-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
+-keepattributes JavascriptInterface
+#arithmetic optimisation doesn't work on android
+#the other one is because Amazon OS is coded by a bunch of incredibly lazy developers.
+#-optimizations !code.simplification.arithmetic
+#-optimizations !code/allocation/variable
+
+#####################################################
+#	QUICK HACK FOR DEX COUNT - WIEBO ANDROID
+-dontwarn com.sina.**
+-dontwarn com.fgol.FGOLWeibo**
+#####################################################
+#DANGEROUS, THESE SETTINGS REMOVE CLASSES WITHOUT WARNINGS OR ERRORS
+#WE WERE DOING THIS BY MANUALLY EDITING JAR FILES BEFORE, SO I KNOW THESE ARE FINE.
+-assumenosideeffects class com.google.android.gms.drive.** { *; }
+-assumenosideeffects class com.google.android.gms.maps.** { *; }
+-assumenosideeffects class com.google.android.gms.tagmanager.** { *; }
+-assumenosideeffects class com.google.android.api.** { *; }
+
+#ignore duplicate class errors
+-dontnote android.net.http.SslCertificate
+-dontnote android.net.http.SslError
+-dontnote android.net.http.SslCertificate$DName
+-dontnote org.apache.http.params.HttpParams
+-dontnote com.playhaven.android.BuildConfig
+-dontnote org.apache.http.** 
+-dontnote com.google.android.gms.drive.**
+
+#WARNINGS CAUSE THE BUILD TO FAIL
+#THESE WARNINGS ARE JUST NOTIFICATIONS
+-dontwarn android.net.http.AndroidHttpClient
+-dontwarn android.app.Notification
+-dontwarn android.security.NetworkSecurityPolicy
+-dontwarn com.google.android.gms.**
+-dontwarn com.google.code.rome.android.repackaged.**
+-dontwarn com.google.api.client.http.apache.**
+-dontwarn com.google.gson.**
+-dontwarn org.apache.commons.codec.binary.Base64
+-dontwarn org.apache.http.**
+-dontwarn org.apache.commons.**
+-dontwarn org.apache.httpcomponents.**
+-dontwarn org.codehaus.jackson.**
+-dontwarn org.simpleframework.xml.**
+-dontwarn com.amazon.sdk.availability.Measurement
+-dontwarn com.fasterxml.jackson.**
+-dontwarn com.flurry.sdk.ju
+-dontwarn com.chartboost.sdk.impl.**
+-dontwarn com.facebook.android.BuildConfig
+-dontwarn com.kontagent.network.asynchttpclient.**
+-dontwarn com.jirbo.adcolony.ae
+-dontwarn com.jirbo.adcolony.ADCVideo
+-dontwarn com.inmobi.**
+-dontwarn com.facebook.ads.**
+-dontwarn com.mopub.**
+-dontwarn com.unity3d.ads.android.mopub.UnityAdsMopubEvents
+-dontwarn com.pushwoosh.PushAmazonIntentService
+-dontwarn com.everyplay.Everyplay.communication.socialnetworks.EveryplayFacebook
+-dontwarn com.flurry.android.tumblr.**
+-dontwarn com.flurry.sdk.lw
+-dontwarn com.prime31.Soomla
+-dontwarn com.prime31.Soomla$1
+-dontwarn com.unity3d.plugin.downloader.b.c
+-dontwarn com.jirbo.unityadc.**
+-dontwarn com.jirbo.adcolony.ADCVideoHUD
+-dontwarn sun.misc.Unsafe
+-dontwarn com.ubisoft.unity.CUnityPlayer 
+
+#####################################################
+#	AppsFlyer
+-dontwarn com.google.firebase.iid.FirebaseInstanceIdService
+-dontwarn com.appsflyer.FirebaseInstanceIdListener
+-dontwarn com.appsflyer.**
+-keep public class com.google.android.gms.iid.InstanceID {
+    public *;
+}
+-dontwarn com.android.installreferrer
+#####################################################
+
+#amazon tells me to do this, seriously
+-dontwarn com.amazon.**
+
+#JAVA STUFF
+-keep class java.util.List { *; }
+-keep class java.util.HashMap { *; }
+-keep class java.util.Date { *; }
+-keep class java.util.ArrayList { *; }
+
+#####################################################
+#	ANDROID STUFF
+# 	TODO: Review - these will keep all activities 
+
+-keep class * extends android.app.Activity
+-keep class * extends android.app.Application
+-keep class * extends android.app.Service
+-keep class * extends android.app.backup.BackupAgentHelper
+-keep class * extends android.content.BroadcastReceiver
+-keep class * extends android.content.ContentProvider
+-keep class * extends android.preference.Preference
+-keep class android.os.SystemProperties { *; }
+-keep class com.android.billingclient.api.BillingClient { *; }
+-keep class android.view.View$ListenerInfo { *; }
+-keep class com.android.billingclient.api.ProxyBillingActivity { *; }
+
+-keep class android.accounts.Account { *; }
+-keep class android.accounts.AccountManager { *; }
+-keep class android.content.pm.ApplicationInfo { *; }
+-keep class android.content.RestrictionsManager { *; }
+
+-keep class **.R$* { *; }
+-keep class android.app.** { *; }
+-keep class android.content.pm.* { *; }
+-keep class android.net.* { *; }
+-keep class android.os.* { *; }
+-keep class android.support.annotations.* { *; }
+-keep class android.test.IsolatedContext { *; }
+-keep class android.webkit.WebSettings { *; }
+
+-keep public class android.hardware.display.** { public *; }
+-keep public class android.provider.* { public *; }
+-keep public class android.telecom.* { public *; }
+-keep public class android.transition.* { public *; }
+
+-keep class com.google.android.gms.games.video.* { *; }
+-keep class com.google.android.gms.common.GooglePlayServicesClient { *; }
+-keep class com.google.android.gms.common.GooglePlayServicesClient$ConnectionCallbacks { *; }
+-keep class android.os.WorkSource$WorkChain { *; }
+
+#####################################################
+#	GOOGLE GMS STUFF
+# 	GMS and PlayServices should be automatically sorted by android plugin for gradle
+# 	https://developers.google.com/android/guides/setup#Proguard
+
+-keep class com.google.android.vending.** { *; }
+-keep public class com.google.android.finsky.* { public *; }
+-keep public class com.google.android.gms.analytics.GoogleAnalytics { public *; }
+-keep public class com.google.android.gms.analytics.HitBuilders { public *; }
+-keep public class com.google.android.gms.analytics.HitBuilders$EventBuilder { public *; }
+-keep public class com.google.android.gms.analytics.Tracker { public *; }
+-keep public class com.google.android.gms.auth.GoogleAuthUtil { public *; }
+-keep public class com.google.android.gms.common.api.GoogleApiClient* { *; }
+-keep public class com.google.android.gms.common.data.DataHolder { *; }
+-keep public class com.google.android.gms.common.data.DataBufferUtils { *; }
+-keep public class com.google.android.gms.games.ui.GamesFragmentActivity { *; }
+-keep public class com.google.android.gms.games.NativeSdkCallbacks { public *; }
+-keep public class com.google.android.gms.games.Games { public *; }
+-keep public class com.google.android.gms.games.Games$GamesOptions { public *; }
+-keep public class com.google.android.gms.games.Games$GamesOptions$Builder { public *; }
+-keep public class com.google.android.gms.games.Games$GetServerAuthCodeResult { public *; }
+-keep public class com.google.android.gms.games.Player { public *; }
+-keep public class com.google.android.gms.games.PlayerBuffer { public *; }
+-keep public class com.google.android.gms.games.PlayerLevel { public *; }
+-keep public class com.google.android.gms.games.PlayerLevelInfo { public *; }
+-keep public class com.google.android.gms.games.Players { public *; }
+-keep public class com.google.android.gms.games.Players$LoadPlayersResult { public *; }
+-keep public class com.google.android.gms.games.achievement.Achievement { public *; }
+-keep public class com.google.android.gms.games.achievement.Achievements$LoadAchievementsResult { public *; }
+-keep public class com.google.android.gms.games.event.Event { public *; }
+-keep public class com.google.android.gms.games.event.EventBuffer { public *; }
+-keep public class com.google.android.gms.games.event.Events { public *; }
+-keep public class com.google.android.gms.games.event.Events$LoadEventsResult { public *; }
+-keep public class com.google.android.gms.games.achievement.AchievementBuffer { public *; }
+-keep public class com.google.android.gms.games.achievement.Achievements { public *; }
+-keep public class com.google.android.gms.games.leaderboard.Leaderboard { public *; }
+-keep public class com.google.android.gms.games.leaderboard.LeaderboardBuffer { public *; }
+-keep public class com.google.android.gms.games.leaderboard.Leaderboards { public *; }
+-keep public class com.google.android.gms.games.leaderboard.LeaderboardScore { public *; }
+-keep public class com.google.android.gms.games.leaderboard.LeaderboardScoreBuffer { public *; }
+-keep public class com.google.android.gms.games.leaderboard.LeaderboardVariant { public *; }
+-keep public class com.google.android.gms.games.leaderboard.Leaderboards$LeaderboardMetadataResult { public *; }
+-keep public class com.google.android.gms.games.leaderboard.Leaderboards$LoadScoresResult { public *; }
+-keep public class com.google.android.gms.games.multiplayer.Invitation { public *; }
+-keep public class com.google.android.gms.games.multiplayer.InvitationBuffer { public *; }
+-keep public class com.google.android.gms.games.multiplayer.Invitations { public *; }
+-keep public class com.google.android.gms.games.multiplayer.Invitations$LoadInvitationsResult { public *; }
+-keep public class com.google.android.gms.games.multiplayer.Multiplayer { public *; }
+-keep public class com.google.android.gms.games.multiplayer.Participant { public *; }
+-keep public class com.google.android.gms.games.multiplayer.ParticipantResult { public *; }
+-keep public class com.google.android.gms.games.multiplayer.turnbased.LoadMatchesResponse { public *; }
+-keep public class com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch { public *; }
+-keep public class com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchBuffer { public *; }
+-keep public class com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig { public *; }
+-keep public class com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig$Builder { public *; }
+-keep public class com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer { public *; }
+-keep public class com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer$CancelMatchResult { public *; }
+-keep public class com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer$InitiateMatchResult { public *; }
+-keep public class com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer$LeaveMatchResult { public *; }
+-keep public class com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer$LoadMatchesResult { public *; }
+-keep public class com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer$LoadMatchResult { public *; }
+-keep public class com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer$UpdateMatchResult { public *; }
+-keep public class com.google.android.gms.games.quest.Quest { public *; }
+-keep public class com.google.android.gms.games.quest.QuestBuffer { public *; }
+-keep public class com.google.android.gms.games.quest.Quests { public *; }
+-keep public class com.google.android.gms.games.quest.Milestone { public *; }
+-keep public class com.google.android.gms.games.quest.Quests$LoadQuestsResult { public *; }
+-keep public class com.google.android.gms.games.quest.Quests$AcceptQuestResult { public *; }
+-keep public class com.google.android.gms.games.quest.Quests$ClaimMilestoneResult { public *; }
+-keep public class com.google.android.gms.games.snapshot.Snapshot { public *; }
+-keep public class com.google.android.gms.games.snapshot.SnapshotContents { public *; }
+-keep public class com.google.android.gms.games.snapshot.SnapshotMetadata { public *; }
+-keep public class com.google.android.gms.games.snapshot.SnapshotMetadataBuffer { public *; }
+-keep public class com.google.android.gms.games.snapshot.Snapshots { public *; }
+-keep public class com.google.android.gms.games.snapshot.Snapshots$CommitSnapshotResult { public *; }
+-keep public class com.google.android.gms.games.snapshot.Snapshots$LoadSnapshotsResult { public *; }
+-keep public class com.google.android.gms.games.snapshot.Snapshots$OpenSnapshotResult { public *; }
+-keep public class com.google.android.gms.games.snapshot.SnapshotMetadataChange { public *; }
+-keep public class com.google.android.gms.games.snapshot.SnapshotMetadataChange$Builder { public *; }
+-keep public class com.google.android.gms.games.stats.PlayerStats { public *; }
+-keep public class com.google.android.gms.games.stats.Stats { public *; }
+-keep public class com.google.android.gms.games.stats.Stats$LoadPlayerStatsResult { public *; }
+-keep public class com.google.android.gms.games.multiplayer.realtime.RealTimeMessageReceivedListener { public *; }
+-keep public class com.google.android.gms.games.multiplayer.realtime.RealTimeMultiplayer { public *; }
+-keep public class com.google.android.gms.games.multiplayer.realtime.RealTimeMessage { public *; }
+-keep public class com.google.android.gms.games.multiplayer.realtime.Room { public *; }
+-keep public class com.google.android.gms.games.multiplayer.realtime.RoomConfig { public *; }
+-keep public class com.google.android.gms.games.multiplayer.realtime.RoomConfig$Builder { public *; }
+-keep public class com.google.android.gms.gcm.GoogleCloudMessaging { public *; }
+-keep public class com.google.android.gms.nearby.Nearby { public *; }
+-keep public class com.google.android.gms.nearby.connection.Connections { public *; }
+-keep public class com.google.android.gms.nearby.connection.Connections$StartAdvertisingResult { public *; }
+-keep public class com.google.android.gms.nearby.connection.Connections$ConnectionRequestListener { public *; }
+-keep public class com.google.android.gms.nearby.connection.AppIdentifier { public *; }
+-keep public class com.google.android.gms.nearby.connection.AppMetadata { public *; }
+-keep public class com.google.android.gms.plus.Plus { public *; }
+-keep public class com.google.android.gm.provider.DisableNotificationsProvider { public *; }
+
+## MAnual additions from cleanup
+-keep public class com.google.firebase.messaging.** { *; }
+-keep class com.google.protobuf.** { *; } 
+-keep class org.robolectric.Robolectric.** { *; }
+-keep class com.google.android.gms.auth.** { *; }
+
+# We will keep the Unity bridge stuff 
+-keep class com.google.games.bridge.* { *; }
+-keep interface com.google.games.bridge.* { *; }
+#####################################################
+
+#####################################################
+#	GSON
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class sun.misc.Unsafe { *; }
+#####################################################
+
+#AMAZON
+-keep class com.amazon.** {*;}
+
+#####################################################
+#	THIRD PARTY STUFF
+-keep class com.fgol.** { *; }
+-keep class com.facebook.** { *; }
+-keep class com.facebook.unity.FB { *; }
+-keep class com.flurry.** {*;}
+-keep class com.flurry.android.FlurryAgent { *; }
+-keep class com.google.thirdparty.** { *; }
+-keep class com.unity3d.player.** { *; }
+-keep class com.unity3d.plugin.downloader.** { *; }
+-keep class com.prime31.EtceteraPlugin { *; }
+-keep class com.prime31.GoogleIABPlugin { *; }
+-keep class bitter.jnibridge.** { *; }
+-keep class dagger.** { *; } 
+-keep class org.fmod.** { *; }
+-keep class org.json.simple.** { *; }
+-keep class com.arellomobile.** { *; }
+-keep class com.facebook.appevents.** { *; }
+-keep class ubisoft.** { *; }
+-keep class com.appsflyer.** { *; }
+-keep class com.purplelilgirl.** { *; }
+-keep class com.facebook.katana.provider.AttributionIdProvider
+#####################################################
+
+-keep class ourpalm.** { *; }
+-dontwarn ourpalm.**
+
+#####################################################
+#	Ubisoft CP2
+-keep class com.ubisoft.** { *; }
+# For communication with AdColony's WebView
+-keepclassmembers class * { 
+    @android.webkit.JavascriptInterface <methods>; 
+}
+#####################################################
+
+# GreenRobot
+-dontwarn de.greenrobot.event.util.**
+
+#####################################################
+# RxJava
+-dontwarn rx.internal.util.unsafe.**
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+   long producerIndex;
+   long consumerIndex;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+   rx.internal.util.atomic.LinkedQueueNode producerNode;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
+   rx.internal.util.atomic.LinkedQueueNode consumerNode;
+}
+-keep class rx.schedulers.Schedulers { public static <methods>; }
+-keep class rx.schedulers.ImmediateScheduler { public <methods>; }
+-keep class rx.schedulers.TestScheduler { public <methods>; }
+-keep class rx.schedulers.Schedulers { public static ** test(); }
+
+# Retrofit
+-dontwarn okio.**
+-dontwarn retrofit2.Platform$Java8
+
+#####################################################
+
+#UniClipboard
+-keep class jp.ne.donuts.uniclipboard.** { *; }
+
+#############################################################################
+#COMPLICATED RULES FOR KEEPING NATIVE/STATIC/ENUM/CALLBACKS/STACKTRACES/ETC #
+#############################################################################
+
+-keepclasseswithmembernames,includedescriptorclasses,includedescriptorclasses class * {
+ native <methods>;
+}
+
+-keepclasseswithmembers class * {
+ *** *Callback(...);
+}
+
+-keepclassmembers enum * {
+ public static **[] values();
+ public static ** valueOf(java.lang.String);
+}
+
+-keep class * extends java.util.ListResourceBundle {
+    protected java.lang.Object[][] getContents();
+}
+
+-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+    public static final *** NULL;
+}
+
+-keepnames class * implements android.os.Parcelable
+-keepclassmembers class * implements android.os.Parcelable {
+  public static final *** CREATOR;
+}
+
+-keep @interface android.support.annotation.Keep
+-keep @android.support.annotation.Keep class *
+-keepclasseswithmembers class * {
+  @android.support.annotation.Keep <fields>;
+}
+-keepclasseswithmembers class * {
+  @android.support.annotation.Keep <methods>;
+}
+
+-keep @interface com.google.android.gms.common.annotation.KeepName
+-keepnames @com.google.android.gms.common.annotation.KeepName class *
+-keepclassmembernames class * {
+  @com.google.android.gms.common.annotation.KeepName *;
+}
+
+-keep @interface com.google.android.gms.common.util.DynamiteApi
+-keep public @com.google.android.gms.common.util.DynamiteApi class * {
+  public <fields>;
+  public <methods>;
+}
+
+#####################################################
+
+#####################################################
+#	MOPUB PROGUARD  		
+
+# Keep public classes and methods.
+-keepclassmembers class com.mopub.** { public *; }
+-keep public class com.mopub.**
+
+# Explicitly keep any custom event classes in any package.
+-keep class * extends com.mopub.mobileads.CustomEventBanner {}
+-keep class * extends com.mopub.mobileads.CustomEventInterstitial {}
+-keep class * extends com.mopub.nativeads.CustomEventNative {}
+-keep class * extends com.mopub.mobileads.CustomEventRewardedVideo {}
+
+# Support for Android Advertiser ID.
+-keep class com.google.android.gms.common.GooglePlayServicesUtil {*;}
+-keep class com.google.android.gms.ads.identifier.AdvertisingIdClient {*;}
+-keep class com.google.android.gms.ads.identifier.AdvertisingIdClient$Info {*;}
+
+# For communication with AdColony's WebView
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+# Keep ADCNative class members unobfuscated
+-keepclassmembers class com.adcolony.sdk.ADCNative** {
+    *;
+}
+
+-keep class com.adcolony.** { *; }
+-keep class com.google.ads.** { *; }
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.google.android.gms.common.api.** { *; }
+
+#####################################################
+
+#####################################################
+#	MOPUB + FGOL EXTENSION
+-keep class com.fgol.* { *; }
+-keepclassmembers class com.mopub.mobileads.RewardedAdData** { *; }
+-keepclassmembers class com.mopub.mobileads.MoPubRewardedVideoManager** { *; }
+-keepclassmembers class com.mopub.network.AdResponse** { *; }
+-keepclassmembers class com.mopub.mobileads.factories.CustomEventInterstitialAdapterFactory** { *; }
+
+#####################################################
+
+#####################################################
+#	VUNGLE
+-keep class com.vungle.warren.** { *; }
+-dontwarn com.vungle.warren.error.VungleError$ErrorCode
+
+# Moat SDK
+-keep class com.moat.** { *; }
+-dontwarn com.moat.**
+
+# Okio
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+
+# Retrofit
+-dontwarn okio.**
+-dontwarn retrofit2.Platform$Java8
+
+# Gson
+-keepattributes Signature
+-keepattributes *Annotation*
+-dontwarn sun.misc.**
+-keep class com.google.gson.examples.android.model.** { *; }
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+
+# Google Android Advertising ID
+-keep class com.google.android.gms.internal.** { *; }
+-dontwarn com.google.android.gms.ads.identifier.**
+
+#####################################################
+
+#####################################################
+#	UnityAds 
+
+-keep class android.webkit.SafeBrowsingResponse { *; }
+
+#####################################################
+
+#####################################################
+#	Facebook Audience Network
+-keep class com.mopub.mobileads.FacebookInterstitial 
+-keep class com.mopub.mobileads.FacebookRewardedVideo 
+-keep class com.facebook.ads.** { *; }
+
+#####################################################
+
+#####################################################
+#	GRADLE CLEANUP
+
+-keep class android.arch.lifecycle.LifecycleOwner
+-keep class android.arch.lifecycle.Lifecycle$Event
+-keep class com.integralads.avid.library.adcolony.session.AvidManagedVideoAdSession
+-keep class com.integralads.avid.library.adcolony.session.AvidVideoAdSession
+-keep class com.integralads.avid.library.adcolony.session.AvidDisplayAdSession
+-keep class bolts.Task
+-keep class bolts.Task$TaskCompletionSource
+-keep class com.google.android.gms.dynamic.IObjectWrapper
+-keep class com.google.android.gms.common.BlockingServiceConnection
+-keep class com.google.android.gms.common.internal.ClientSettings
+-keep class com.google.android.gms.tasks.TaskCompletionSource
+-keep class com.google.android.gms.common.server.response.FastJsonResponse
+-keep class com.google.android.gms.common.internal.BaseGmsClient$ConnectionProgressReportCallbacks
+-keep class com.google.android.gms.common.internal.IAccountAccessor
+-keep class com.google.android.gms.common.internal.BaseGmsClient$SignOutCallbacks
+-keep class com.google.android.gms.common.data.AbstractDataBuffer
+-keep class com.google.android.gms.common.internal.ICancelToken
+-keep class com.google.android.gms.common.util.BiConsumer
+-keep class com.google.android.gms.common.data.DataBuffer
+-keep class com.google.android.gms.common.sqlite.CursorWrapper
+-keep class com.google.android.gms.common.data.DataHolder$Builder
+-keep class com.google.android.gms.common.data.zab
+-keep class com.google.android.gms.common.internal.BaseGmsClient$BaseConnectionCallbacks
+-keep class com.google.android.gms.common.internal.BaseGmsClient$BaseOnConnectionFailedListener
+-keep class com.google.android.gms.common.internal.GmsClientSupervisor
+-keep class com.google.android.gms.common.internal.BaseGmsClient
+-keep class com.google.android.gms.common.internal.IGmsServiceBroker
+-keep class com.google.android.gms.games.multiplayer.InvitationCallback
+-keep class com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchUpdateCallback
+-keep class com.google.android.gms.games.multiplayer.OnInvitationReceivedListener
+-keep class com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener
+-keep class com.google.android.gms.games.multiplayer.realtime.RealTimeMultiplayer$ReliableMessageSentCallback
+-keep class com.google.android.gms.games.multiplayer.realtime.RoomUpdateCallback
+-keep class com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener
+-keep class com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateCallback
+-keep class com.google.android.gms.games.multiplayer.realtime.OnRealTimeMessageReceivedListener
+-keep class com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener
+-keep class com.google.android.gms.games.quest.QuestUpdateListener
+-keep class com.google.android.gms.iid.zzak
+-keep class com.google.android.gms.measurement.api.AppMeasurementSdk
+-keep class com.google.android.gms.games.internal.zze
+-keep class com.google.android.gms.games.request.OnRequestReceivedListener
+-keep class com.google.android.gms.location.zzx
+-keep class com.google.android.gms.location.zzu
+-keep class com.google.android.gms.location.LocationListener
+-keep class com.google.android.gms.location.LocationCallback
+-keep class com.google.android.gms.measurement.internal.zzcx
+-keep class com.google.android.gms.measurement.internal.zzcy
+-keep class com.google.firebase.messaging.zzf
+-keep class com.google.flatbuffers.FlatBufferBuilder
+-keep class com.google.flatbuffers.Table
+-keep class com.integralads.avid.library.adcolony.session.internal.jsbridge.AvidJavascriptInterface$AvidJavascriptInterfaceCallback
+-keep class com.mopub.common.UrlResolutionTask$UrlResolutionListener
+-keep class com.mopub.common.logging.MoPubLog$MPLogEventType
+-keep class com.mopub.common.privacy.ConsentDialogResponse
+-keep class com.mopub.mobileads.RewardedVastVideoInterstitial$RewardedVideoInterstitialListener
+-keep class com.mopub.mobileads.VastTracker$MessageType
+-keep class com.mopub.mobileads.VastResource
+-keep class com.mopub.mobileads.VastWebView
+-keep class com.mopub.mobileads.VastIconConfig
+-keep class com.mopub.mobileads.VideoDownloader$VideoDownloaderListener
+-keep class com.mopub.mraid.MraidScreenMetrics
+-keep class com.mopub.mraid.MraidCommandException
+-keep class com.mopub.mraid.MraidOrientation
+-keep class com.mopub.mraid.MraidNativeCommandHandler$DownloadImageAsyncTask$DownloadImageAsyncTaskListener
+-keep class com.mopub.nativeads.GooglePlayServicesNative$GooglePlayServicesNativeAd
+-keep class com.mopub.network.AdResponse$1
+-keep class com.prime31.util.IabResult
+-keep class com.prime31.util.Inventory
+-keep class com.prime31.util.Purchase
+-keep class retrofit2.Call
+-keep class retrofit2.Response
+-keep class com.google.gson.JsonObject
+-keep class com.google.gson.JsonArray
+-keep class com.google.gson.JsonElement
+-keep class retrofit2.Callback
+-keep class okhttp3.Interceptor$Chain
+
+#	END GRADLE CLEANUP
+#####################################################

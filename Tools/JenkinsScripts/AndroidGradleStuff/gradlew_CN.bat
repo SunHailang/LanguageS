@@ -1,0 +1,5 @@
+@Echo ON
+
+
+gradle build
+
