@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using UnityEngine.Video;
 
 public class SplashLoader : MonoBehaviour
@@ -10,6 +11,8 @@ public class SplashLoader : MonoBehaviour
     private Transform m_video;
     [SerializeField]
     private RectTransform m_imageBG;
+
+    private Material m_imageMaterial;
 
     private static readonly float m_staWidth = 1920.0f;
     private static readonly float m_staHeight = 1080.0f;
@@ -30,7 +33,25 @@ public class SplashLoader : MonoBehaviour
     private void Start()
     {
         StartCoroutine(SetImageBG());
+
+        m_imageMaterial = m_imageBG.GetComponent<Image>().material;
     }
+
+    private void Update()
+    {
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    Vector3 mousePos = Input.mousePosition;
+
+        //    m_imageMaterial.SetVector("_mousePos", new Vector4(mousePos.x / Screen.width, mousePos.y / Screen.height, mousePos.z, 1));
+
+        //    m_imageMaterial.SetFloat("_mousePosX", mousePos.x / Screen.width);
+        //    m_imageMaterial.SetFloat("_mousePosY", mousePos.y / Screen.height);
+
+        //    Debug.Log($"x:{mousePos.x / Screen.width}, y:{mousePos.y / Screen.height}");
+        //}
+    }
+
 
     private IEnumerator SetImageBG()
     {
