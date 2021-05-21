@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TerrainController : MonoBehaviour
 {
@@ -13,6 +14,52 @@ public class TerrainController : MonoBehaviour
     [SerializeField]
     private Transform m_flowersLowPrefab;
 
+    [SerializeField]
+    private MeshRenderer m_meshRender;
+
+    private Material m_camMaterial;
+
+    UnityEvent unityEvent;// = new UnityEvent();
+
+    private void Awake()
+    {
+        
+        unityEvent?.Invoke();
+
+        m_camMaterial = m_meshRender.material;
+
+        StartCoroutine(ShowWebCamTexture());
+
+    }
+
+    private IEnumerator ShowWebCamTexture()
+    {
+        yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);
+        if (Application.HasUserAuthorization(UserAuthorization.WebCam))
+        {
+            Debug.Log("webcam found");
+            WebCamDevice[] devices = WebCamTexture.devices;
+            if (devices.Length > 0)
+            {
+                WebCamTexture camTexture = new WebCamTexture(1920, 1080, 60);
+                camTexture.deviceName = devices[0].name;
+
+                m_camMaterial.mainTexture = camTexture;
+
+                camTexture.Play();
+            }
+            else
+            {
+                Debug.Log("No WebCamera.");
+            }
+        }
+        else
+        {
+            Debug.Log("webcam not found");
+        }
+
+        //Microphone.devices
+    }
 
     private void Start()
     {

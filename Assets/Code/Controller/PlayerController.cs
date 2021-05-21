@@ -22,11 +22,17 @@ public class PlayerController : MonoBehaviour
     public event System.Action<bool, bool> onPlayerAnimatorEvent;
     public event System.Action<SkillActionType> onPlayerSkillEvent;
 
-    private Vector3 m_moveDirection = Vector3.zero;
+    private Vector3 m_movePlayer = Vector3.zero;
+    private Vector3 m_directionPlayer = Vector3.right;
+
     private SkillActionType m_playerSkill = SkillActionType.None;
 
     private bool m_isDeath = false;
     public bool IsDeath { get { return m_isDeath; } }
+
+    private bool m_isRunning = false;
+    private float m_angleOffset = 0;
+
 
     private void Awake()
     {
@@ -51,17 +57,34 @@ public class PlayerController : MonoBehaviour
         EventManager<Events>.Instance.TriggerEvent(Events.PlayerLifeState, !m_isDeath);
     }
 
-    public void SetPlayerMoveDirection(Vector3 direction)
+    public void SetPlayerMove(Vector3 direction)
     {
         if (m_playerSkill != SkillActionType.None || m_isDeath)
         {
             direction = Vector3.zero;
         }
 
-        m_moveDirection.x = direction.x;
-        m_moveDirection.y = direction.z;
-        m_moveDirection.z = direction.y;
+        float x = direction.x * Mathf.Cos(m_angleOffset) + direction.y * Mathf.Sin(m_angleOffset);
+        float z = -direction.x * Mathf.Sin(m_angleOffset) + direction.y * Mathf.Cos(m_angleOffset);
+
+        m_movePlayer.x = x;
+        m_movePlayer.y = direction.z;
+        m_movePlayer.z = z;
+
+        m_isRunning = x != 0 || z != 0;
     }
+
+    public Vector3 SetPlayerDirection(Vector2 direction)
+    {
+        Vector3 rotation = transform.rotation.eulerAngles;
+        rotation.y += direction.x;
+        transform.rotation = Quaternion.Euler(rotation);
+
+        m_angleOffset = transform.rotation.eulerAngles.y * Mathf.Deg2Rad;//弧度
+
+        return transform.rotation.eulerAngles;
+    }
+
 
     private void Update()
     {
@@ -72,26 +95,23 @@ public class PlayerController : MonoBehaviour
             jump = false;
             playerVelocity.y = 0f;
         }
-
-        Vector3 move = new Vector3(m_moveDirection.x, 0, m_moveDirection.z);
-        m_controller.Move(move * Time.deltaTime * playerSpeed);
-
-        //float distance = Vector3.Distance();
-        bool running = move != Vector3.zero;
-        if (move != Vector3.zero)
-            gameObject.transform.forward = move.normalized;
+        if (m_isRunning)
+        {
+            //transform.position += m_movePlayer * playerSpeed * Time.deltaTime;
+            m_controller.Move(m_movePlayer.normalized * playerSpeed * Time.deltaTime);
+        }
 
         // Changes the height position of the player..
-        if (m_moveDirection.y > 0 && groundedPlayer)
+        if (m_movePlayer.y > 0 && groundedPlayer)
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * jumpValue * gravityValue);
             jump = true;
-            m_moveDirection.y = 0;
+            m_movePlayer.y = 0;
             // magic
             PlayerData.Instance.SetPlayerData(ReplyType.Magic, -0.1f);
         }
 
-        onPlayerAnimatorEvent?.Invoke(running, jump);
+        onPlayerAnimatorEvent?.Invoke(m_isRunning, jump);
 
         playerVelocity.y += gravityValue * Time.deltaTime;
         m_controller.Move(playerVelocity * Time.deltaTime);

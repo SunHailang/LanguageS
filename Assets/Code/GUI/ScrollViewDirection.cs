@@ -1,11 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using UnityEngine.EventSystems;
 
-public class ScrollViewDirection : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class ScrollViewDirection : MonoBehaviour
 {
 
     [SerializeField]
@@ -45,38 +42,9 @@ public class ScrollViewDirection : MonoBehaviour, IBeginDragHandler, IDragHandle
         }
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        //Debug.Log("OnBeginDrag");
-    }
 
-    public void OnDrag(PointerEventData eventData)
-    {
-        //Debug.Log($"OnDrag:: {eventData.delta}");
-
-        //m_scrollviewContent.localPosition += new Vector3(eventData.delta.x, 0, 0);
-        if (eventData.delta.x < 0)
-        {
-            // left move
-        }
-        if (eventData.delta.x > 0)
-        {
-            // right move
-        }
-
-        for (int i = 0; i < m_items.Count; i++)
-        {
-            m_items[i].transform.localPosition += new Vector3(eventData.delta.x, 0, 0);
-        }
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        //Debug.Log("OnEndDrag");
-    }
-
-    public float m_perTargetAngle = 0.0f;
-    public float m_targetAngle = 0.0f;
+    private float m_perTargetAngle = 90.0f;
+    private float m_targetAngle = -1.0f;
 
     private bool m_scrollState = false;
 
@@ -140,7 +108,7 @@ public class ScrollViewDirection : MonoBehaviour, IBeginDragHandler, IDragHandle
         if (nextValue < 0)
             deltaX = Mathf.Lerp(0, m_centerX, 0.0285f);
         else
-            deltaX = Mathf.Lerp(0, nextValue, 0.027f);
+            deltaX = Mathf.Lerp(0, nextValue, 0.045f);
 
         nextValue = nextValue > 0 ? nextValue : deltaX;
         if (nextValue <= 0.2f)

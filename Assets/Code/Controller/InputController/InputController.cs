@@ -1,18 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
+
 using TMPro;
 using UnityEngine.UI;
 using System;
 
-public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class InputController : MonoBehaviour
 {
+    [SerializeField]
+    private InputMoveController m_inputMoveController;
+    [SerializeField]
+    private InputDirectionController m_inputDirectionController;
+
     [SerializeField]
     private ScrollViewDirection m_scrollviewDir;
 
-    [SerializeField]
-    private RectTransform m_inputKnob;
+
     [SerializeField]
     private TextMeshProUGUI m_directionText;
     [SerializeField]
@@ -29,9 +33,6 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     private Vector3 m_perMoveDirection = Vector3.forward;
     private Vector3 playerMoveDirection = Vector3.zero;
 
-    private const float m_maxSpeed = 125.0f;
-    private bool m_startDrag = false;
-
     private bool m_isDeath = false;
 
     private void Awake()
@@ -39,6 +40,9 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         // regist event
         EventManager<Events>.Instance.RegisterEvent(Events.PickType, OnPickShow);
         EventManager<Events>.Instance.RegisterEvent(Events.PlayerLifeState, OnPlayerLifeState);
+
+        m_inputMoveController.playerMoveController += SetPlayerMove;
+        m_inputDirectionController.playerDirectionController += SetPlayerDirection;
 
         m_btnJump.onClick.AddListener(BtnJump_OnClick);
         m_btnE.onClick.AddListener(BtnE_OnClick);
@@ -85,47 +89,16 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         }
     }
 
-    private void OnEnable()
+    private void SetPlayerMove(Vector3 move)
     {
-        m_inputKnob.anchoredPosition = Vector3.zero;
+        move.z = playerMoveDirection.z;
+        PlayerController.Instance.SetPlayerMove(move);
     }
 
-    private void Start()
+    private void SetPlayerDirection(Vector2 direction)
     {
-        SetDirection(m_perMoveDirection);
-    }
-
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        m_startDrag = true;
-        SetPosition(eventData, m_inputKnob);
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        m_startDrag = false;
-        m_inputKnob.localPosition = Vector3.zero;
-
-        playerMoveDirection = Vector3.zero;
-    }
-
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        m_startDrag = true;
-        SetPosition(eventData, m_inputKnob);
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        SetPosition(eventData, m_inputKnob);
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        m_startDrag = false;
-        m_inputKnob.localPosition = Vector3.zero;
-
-        playerMoveDirection = Vector3.zero;
+        Vector3 playerDirection = PlayerController.Instance.SetPlayerDirection(direction);
+        SetDirection(playerDirection.y);
     }
 
     private void Update()
@@ -133,28 +106,17 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         if (Input.GetKeyDown(KeyCode.Escape)) UIController.Instance.Open<QuitGame>("QuitGame", UILevel.PanelLevel);
         if (Input.GetKeyDown(KeyCode.E) && m_colliders != null) PickE();
 
-        if (!m_startDrag && !IsDeath())
-            playerMoveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), playerMoveDirection.z);
-
-        if (Input.GetButtonDown("Jump")) JumpSpace();
-
-        if (IsDeath()) playerMoveDirection = Vector3.zero;
-        if (playerMoveDirection.x != 0.0f || playerMoveDirection.y != 0.0f)
-        {
-            m_perMoveDirection = playerMoveDirection;
-            SetDirection(m_perMoveDirection);
-        }
-        PlayerController.Instance.SetPlayerMoveDirection(playerMoveDirection);
         playerMoveDirection.z = 0.0f;
+        if (Input.GetButtonDown("Jump")) JumpSpace();
     }
 
     private void JumpSpace()
     {
         if (IsDeath() || PlayerData.Instance.playerMagic < 0.1f)
-        {
-            return;
-        }
-        playerMoveDirection.z = 1.0f;
+            playerMoveDirection.z = 0.0f;
+        else
+            playerMoveDirection.z = 1.0f;
+        PlayerController.Instance.SetPlayerMove(playerMoveDirection);
     }
 
     private void BtnE_OnClick()
@@ -186,57 +148,10 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         JumpSpace();
     }
 
-    private void SetPosition(PointerEventData eventData, RectTransform rect)
+
+    private void SetDirection(float angleY)
     {
-        if (IsDeath()) return;
-        //存储当前鼠标所在位置
-        Vector3 rectWorldVec;
-        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(rect, eventData.position, eventData.pressEventCamera, out rectWorldVec))
-        {
-            rect.position = rectWorldVec;
-
-            float curDis = Vector3.Distance(Vector3.zero, rect.localPosition);
-            if (curDis > m_maxSpeed)
-            {
-                //指定原点和方向
-                Vector3 direction = rect.localPosition - Vector3.zero;
-                Ray ray = new Ray(Vector3.zero, direction.normalized);
-                Vector3 targetVec = ray.GetPoint(m_maxSpeed);
-                rect.localPosition = targetVec;
-            }
-
-            float distance = Vector3.Distance(rect.localPosition, Vector3.zero);
-            float value = Mathf.Max(0, distance / m_maxSpeed);
-            playerMoveDirection = rect.localPosition.normalized * value;
-        }
-    }
-
-    private void SetDirection(Vector3 direction)
-    {
-        direction = direction != Vector3.zero ? direction.normalized : Vector3.forward;
-        // Set Direction
-
-        float angleLeftValue = Vector3.Dot(direction, Vector3.left);
-        float angleLeft = Mathf.Acos(angleLeftValue) * Mathf.Rad2Deg;
-
-        float angleDownValue = Vector3.Dot(direction, Vector3.down);
-        float angleDown = Mathf.Acos(angleDownValue) * Mathf.Rad2Deg;
-        float angle = 0;
-
-        if (angleLeft >= 0 && angleLeft < 90)
-        {
-            if (angleDown >= 0 && angleDown < 90)
-                angle = (90.0f - angleLeft) + 270.0f;
-            else
-                angle = angleLeft;
-        }
-        else
-        {
-            if (angleDown >= 0 && angleDown < 90)
-                angle = (90.0f - angleDown) + 180.0f;
-            else
-                angle = angleLeft;
-        }
+        float angle = angleY < 0f ? angleY + 360f : angleY > 360f ? angleY - 360f : angleY;
         string angleStr = "";
         if (angle > (360.0f - 22.5f) || angle <= 22.5f)
             angleStr = "E";
@@ -260,11 +175,11 @@ public class InputController : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         m_scrollviewDir.ResetDirection(angle);
     }
 
+
     private bool IsDeath()
     {
         if (m_isDeath)
         {
-            m_inputKnob.localPosition = Vector3.zero;
             playerMoveDirection = Vector3.zero;
             return true;
         }
