@@ -34,11 +34,25 @@ public class InputMoveController : MonoBehaviour, IPointerDownHandler, IPointerU
 
     private void Update()
     {
-        if (!m_startDrag && !IsDeath())
+        if (!IsDeath())
         {
-            playerMoveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), playerMoveDirection.z);
+            playerMoveDirection.z = 0.0f;
+            if (Input.GetButtonDown("Jump")) JumpSpace();
+
+            if (!m_startDrag)
+            {
+                playerMoveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), playerMoveDirection.z);
+            }
             playerMoveController?.Invoke(playerMoveDirection);
         }
+    }
+    public void JumpSpace()
+    {
+        if (IsDeath() || PlayerData.Instance.playerMagic < 0.1f)
+            playerMoveDirection.z = 0.0f;
+        else
+            playerMoveDirection.z = 1.0f;
+        //PlayerController.Instance.SetPlayerMove(playerMoveDirection);
     }
 
     public void OnPointerDown(PointerEventData eventData)

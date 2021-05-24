@@ -95,20 +95,21 @@ public class PlayerController : MonoBehaviour
             jump = false;
             playerVelocity.y = 0f;
         }
-        if (m_isRunning)
-        {
-            //transform.position += m_movePlayer * playerSpeed * Time.deltaTime;
-            m_controller.Move(m_movePlayer.normalized * playerSpeed * Time.deltaTime);
-        }
 
         // Changes the height position of the player..
         if (m_movePlayer.y > 0 && groundedPlayer)
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * jumpValue * gravityValue);
             jump = true;
-            m_movePlayer.y = 0;
             // magic
             PlayerData.Instance.SetPlayerData(ReplyType.Magic, -0.1f);
+        }
+        m_movePlayer.y = 0;
+
+        if (m_isRunning)
+        {
+            //transform.position += m_movePlayer * playerSpeed * Time.deltaTime;
+            m_controller.Move(m_movePlayer.normalized * playerSpeed * Time.deltaTime);
         }
 
         onPlayerAnimatorEvent?.Invoke(m_isRunning, jump);

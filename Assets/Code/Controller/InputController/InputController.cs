@@ -30,9 +30,6 @@ public class InputController : MonoBehaviour
     [SerializeField]
     private Button m_btnSetting;
 
-    private Vector3 m_perMoveDirection = Vector3.forward;
-    private Vector3 playerMoveDirection = Vector3.zero;
-
     private bool m_isDeath = false;
 
     private void Awake()
@@ -91,7 +88,6 @@ public class InputController : MonoBehaviour
 
     private void SetPlayerMove(Vector3 move)
     {
-        move.z = playerMoveDirection.z;
         PlayerController.Instance.SetPlayerMove(move);
     }
 
@@ -105,20 +101,7 @@ public class InputController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape)) UIController.Instance.Open<QuitGame>("QuitGame", UILevel.PanelLevel);
         if (Input.GetKeyDown(KeyCode.E) && m_colliders != null) PickE();
-
-        playerMoveDirection.z = 0.0f;
-        if (Input.GetButtonDown("Jump")) JumpSpace();
     }
-
-    private void JumpSpace()
-    {
-        if (IsDeath() || PlayerData.Instance.playerMagic < 0.1f)
-            playerMoveDirection.z = 0.0f;
-        else
-            playerMoveDirection.z = 1.0f;
-        PlayerController.Instance.SetPlayerMove(playerMoveDirection);
-    }
-
     private void BtnE_OnClick()
     {
         if (IsDeath()) return;
@@ -145,7 +128,7 @@ public class InputController : MonoBehaviour
 
     private void BtnJump_OnClick()
     {
-        JumpSpace();
+        m_inputMoveController.JumpSpace();
     }
 
 
@@ -178,11 +161,6 @@ public class InputController : MonoBehaviour
 
     private bool IsDeath()
     {
-        if (m_isDeath)
-        {
-            playerMoveDirection = Vector3.zero;
-            return true;
-        }
-        return false;
+        return m_isDeath;
     }
 }

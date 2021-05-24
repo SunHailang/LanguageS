@@ -32,13 +32,27 @@ public class SplashLoader : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(SetImageBG());
+        //StartCoroutine(SetImageBG());
 
         m_imageMaterial = m_imageBG.GetComponent<Image>().material;
+        Vector3[] points = new Vector3[3];
+        points[0] = Vector3.zero;
+        points[1] = new Vector3(0.2f, 0.2f);
+        points[2] = Vector3.one;
+        vecs = BezierUtils.GetBezierPoints(points);
     }
-
+    Vector3[] vecs;
+    float m_tTime = 0.0f;
+    bool start = false;
     private void Update()
     {
+        if (m_tTime <= 1.0f && start)
+        {
+            int index = Mathf.RoundToInt((vecs.Length - 1) * m_tTime);
+            m_imageBG.localScale = vecs[index];
+            m_tTime += Time.deltaTime;
+        }
+
         //if (Input.GetMouseButtonDown(0))
         //{
         //    Vector3 mousePos = Input.mousePosition;
@@ -90,7 +104,10 @@ public class SplashLoader : MonoBehaviour
 
     public void BtnStart_OnClick()
     {
-        SceneManager.LoadSceneAsync("SampleScene");
+        //SceneManager.LoadSceneAsync("SampleScene");
+
+        start = true;
+        m_tTime = 0.0f;
     }
 
 }
