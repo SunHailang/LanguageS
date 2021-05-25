@@ -14,6 +14,7 @@ public class BezierScene : MonoBehaviour
     private LineRenderer lineRenderer;
     private int layerOrder = 0;
 
+    
 
 
     // Start is called before the first frame update

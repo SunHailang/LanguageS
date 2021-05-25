@@ -19,17 +19,12 @@ public class TerrainController : MonoBehaviour
 
     private Material m_camMaterial;
 
-    UnityEvent unityEvent;// = new UnityEvent();
 
     private void Awake()
     {
-        
-        unityEvent?.Invoke();
-
         m_camMaterial = m_meshRender.material;
 
         StartCoroutine(ShowWebCamTexture());
-
     }
 
     private IEnumerator ShowWebCamTexture()
