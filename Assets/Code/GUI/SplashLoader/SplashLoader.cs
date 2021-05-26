@@ -11,6 +11,8 @@ public class SplashLoader : MonoBehaviour
     private Transform m_video;
     [SerializeField]
     private RectTransform m_imageBG;
+    [SerializeField]
+    private GameObject m_btnStart;
 
     private Material m_imageMaterial;
 
@@ -28,11 +30,13 @@ public class SplashLoader : MonoBehaviour
         m_video.localScale = Vector3.zero;
         m_imageBG.sizeDelta = new Vector2(m_scaleVec3.x, m_scaleVec3.z) * 10f;
         m_imageBG.localScale = Vector3.one;
+        m_btnStart.transform.localScale = Vector3.zero;
+        m_btnStart.SetActive(false);
     }
 
     private void Start()
     {
-        //StartCoroutine(SetImageBG());
+        StartCoroutine(SetImageBG());
 
         m_imageMaterial = m_imageBG.GetComponent<Image>().material;
         Vector3[] points = new Vector3[3];
@@ -43,13 +47,21 @@ public class SplashLoader : MonoBehaviour
     }
     Vector3[] vecs;
     float m_tTime = 0.0f;
-    bool start = false;
+    bool start = true;
     private void Update()
     {
         if (m_tTime <= 1.0f && start)
         {
             int index = Mathf.RoundToInt((vecs.Length - 1) * m_tTime);
             m_imageBG.localScale = vecs[index];
+            m_tTime += Time.deltaTime;
+            if (m_tTime > 1.0f) start = false;
+        }
+
+        if (m_tTime <= 1.0f && m_btnStart.activeSelf)
+        {
+            int index = Mathf.RoundToInt((vecs.Length - 1) * m_tTime);
+            m_btnStart.transform.localScale = vecs[index];
             m_tTime += Time.deltaTime;
         }
 
@@ -100,14 +112,17 @@ public class SplashLoader : MonoBehaviour
         }
         m_video.localScale = m_scaleVec3;
         m_video.rotation = Quaternion.Euler(new Vector3(630f, -90f, 90f));
+
+        m_tTime = 0.0f;
+        m_btnStart.SetActive(true);
     }
 
     public void BtnStart_OnClick()
     {
-        //SceneManager.LoadSceneAsync("SampleScene");
+        SceneManager.LoadSceneAsync("SampleScene");
 
-        start = true;
-        m_tTime = 0.0f;
+        //start = true;
+        //m_tTime = 0.0f;
     }
 
 }

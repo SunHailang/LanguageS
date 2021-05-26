@@ -11,19 +11,17 @@ public class PlayerController : MonoBehaviour
 
     private CharacterController m_controller;
 
+    private PlayerAnimationController m_animationController;
+
     private Vector3 playerVelocity;
     private bool groundedPlayer;
-    private float playerSpeed = 5.0f;
+    private float playerSpeed = 8.0f;
 
     private float jumpHeight = 1.0f;
     private float gravityValue = -9.8f;
     private float jumpValue = -2.8f;
 
-    public event System.Action<bool, bool> onPlayerAnimatorEvent;
-    public event System.Action<SkillActionType> onPlayerSkillEvent;
-
     private Vector3 m_movePlayer = Vector3.zero;
-    private Vector3 m_directionPlayer = Vector3.right;
 
     private SkillActionType m_playerSkill = SkillActionType.None;
 
@@ -40,7 +38,7 @@ public class PlayerController : MonoBehaviour
         Instance = this;
 
         m_controller = GetComponent<CharacterController>();
-
+        m_animationController = GetComponentInChildren<PlayerAnimationController>();
         // Regiester Events
     }
 
@@ -68,9 +66,11 @@ public class PlayerController : MonoBehaviour
         float z = -direction.x * Mathf.Sin(m_angleOffset) + direction.y * Mathf.Cos(m_angleOffset);
 
         m_movePlayer.x = x;
-        m_movePlayer.y = direction.z;
+        m_movePlayer.y = 0;
         m_movePlayer.z = z;
+        m_animationController.PlayLookForwardEvent(m_movePlayer);
 
+        m_movePlayer.y = direction.z;
         m_isRunning = x != 0 || z != 0;
     }
 
@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour
             m_controller.Move(m_movePlayer.normalized * playerSpeed * Time.deltaTime);
         }
 
-        onPlayerAnimatorEvent?.Invoke(m_isRunning, jump);
+        m_animationController.PlayAnimationEvent(m_isRunning, jump);
 
         playerVelocity.y += gravityValue * Time.deltaTime;
         m_controller.Move(playerVelocity * Time.deltaTime);

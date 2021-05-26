@@ -43,8 +43,8 @@ public class ScrollViewDirection : MonoBehaviour
     }
 
 
-    private float m_perTargetAngle = 90.0f;
-    private float m_targetAngle = -1.0f;
+    private float m_perTargetAngle = 0.0f;
+    private float m_targetAngle = 90.0f;
 
     private bool m_scrollState = false;
 
@@ -123,7 +123,7 @@ public class ScrollViewDirection : MonoBehaviour
         {
             m_items[i].transform.localPosition += new Vector3(deltaX, 0, 0);
             float pos = Mathf.Abs(m_items[i].transform.localPosition.x - m_centerX);
-            if (pos < posX)
+            //if (pos < posX)
             {
                 m_perTargetAngle = m_items[i].itemValue;
                 posX = pos;

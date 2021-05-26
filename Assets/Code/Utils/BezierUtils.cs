@@ -5,7 +5,7 @@ using UnityEngine;
 public class BezierUtils
 {
     // 设置贝塞尔插值个数
-    private static int m_segmentNum = 300;
+    private static int m_segmentNum = 1500;
 
     public static Vector3[] GetBezierPoints(Transform[] points)
     {

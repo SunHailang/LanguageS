@@ -10,7 +10,7 @@ public class InputDirectionController : MonoBehaviour, IBeginDragHandler, IDragH
     private IEnumerator Start()
     {
         yield return null;
-        playerDirectionController?.Invoke(Vector2.zero);
+        playerDirectionController?.Invoke(PlayerController.Instance.transform.forward);
     }
 
     public void OnBeginDrag(PointerEventData eventData)

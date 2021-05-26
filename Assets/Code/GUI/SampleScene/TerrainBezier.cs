@@ -25,12 +25,16 @@ public class TerrainBezier : MonoBehaviour
             lineRenderer = GetComponent<LineRenderer>();
         }
         lineRenderer.sortingLayerID = layerOrder;
+        lineRenderer.startColor = Color.cyan;
+        lineRenderer.endColor = Color.yellow;
+
+        m_bezierHomeVecs = BezierUtils.GetBezierPoints(m_bezierHome);
     }
 
     float m_time = 0;
     bool m_dir = true;
-
-
+    [Range(5.0f, 15.0f)]
+    public float m_totalTime = 15.0f;
     private void Update()
     {
         m_bezierHomeVecs = BezierUtils.GetBezierPoints(m_bezierHome);
@@ -39,21 +43,28 @@ public class TerrainBezier : MonoBehaviour
         lineRenderer.positionCount = (m_bezierHomeVecs.Length);
         lineRenderer.SetPositions(m_bezierHomeVecs);
 
-        if (m_time <= 3.0f)
+        if (m_time <= m_totalTime)
         {
-            int index = Mathf.RoundToInt((m_bezierHomeVecs.Length - 1) * (m_time / 3.0f));
+            int index = Mathf.RoundToInt((m_bezierHomeVecs.Length - 1) * (m_time / m_totalTime));
             m_bezierHomeTrans.position = m_bezierHomeVecs[index];
+
+            //if (index < m_bezierHomeVecs.Length - 1)
+            //{
+            //    Vector3 dir = m_bezierHomeVecs[index + 1] - m_bezierHomeVecs[index];
+            //    m_bezierHomeTrans.forward = dir.normalized;
+            //}
+
             m_time += Time.deltaTime * (m_dir ? 1 : -1);
-            if (m_time > 3.0f)
-            {
-                m_dir = false;
-                m_time = 3.0f;
-            }
-            if (m_time < 0.0f)
+            if (m_time > m_totalTime)
             {
                 m_dir = true;
                 m_time = 0.0f;
             }
+            //if (m_time < 0.0f)
+            //{
+            //    m_dir = true;
+            //    m_time = 0.0f;
+            //}
         }
     }
 }

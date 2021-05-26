@@ -300,6 +300,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_video: {fileID: 1905334623}
   m_imageBG: {fileID: 1723003279}
+  m_btnStart: {fileID: 1467952757}
 --- !u!1 &645031704
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,11 +14,9 @@ public class InputMoveController : MonoBehaviour, IPointerDownHandler, IPointerU
 
     private const float m_maxSpeed = 125.0f;
 
-    private Vector3 m_perMoveDirection = Vector3.forward;
     private Vector3 playerMoveDirection = Vector3.zero;
 
-    private bool m_startDrag = false;
-
+    private bool m_jump = false;
     private bool m_isDeath = false;
 
     private void OnEnable()
@@ -26,52 +24,40 @@ public class InputMoveController : MonoBehaviour, IPointerDownHandler, IPointerU
         m_inputKnob.anchoredPosition = Vector3.zero;
     }
 
-    private IEnumerator Start()
-    {
-        yield return null;
-        playerMoveController?.Invoke(m_perMoveDirection);
-    }
-
     private void Update()
     {
         if (!IsDeath())
         {
-            playerMoveDirection.z = 0.0f;
             if (Input.GetButtonDown("Jump")) JumpSpace();
+            if (m_jump)
+                playerMoveDirection.z = 1.0f;
+            else
+                playerMoveDirection.z = 0.0f;
+            m_jump = false;
 
-            if (!m_startDrag)
-            {
-                playerMoveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), playerMoveDirection.z);
-            }
             playerMoveController?.Invoke(playerMoveDirection);
         }
     }
     public void JumpSpace()
     {
-        if (IsDeath() || PlayerData.Instance.playerMagic < 0.1f)
-            playerMoveDirection.z = 0.0f;
-        else
-            playerMoveDirection.z = 1.0f;
-        //PlayerController.Instance.SetPlayerMove(playerMoveDirection);
+        if (!IsDeath() && PlayerData.Instance.playerMagic >= 0.1f)
+            m_jump = true;
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        m_startDrag = true;
         SetPosition(eventData, m_inputKnob);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        m_startDrag = false;
         m_inputKnob.localPosition = Vector3.zero;
 
-        playerMoveController?.Invoke(Vector3.zero);
+        playerMoveDirection = Vector3.zero;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        m_startDrag = true;
         SetPosition(eventData, m_inputKnob);
     }
 
@@ -82,10 +68,9 @@ public class InputMoveController : MonoBehaviour, IPointerDownHandler, IPointerU
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        m_startDrag = false;
         m_inputKnob.localPosition = Vector3.zero;
 
-        playerMoveController?.Invoke(Vector3.zero);
+        playerMoveDirection = Vector3.zero;
     }
 
     private void SetPosition(PointerEventData eventData, RectTransform rect)
@@ -109,7 +94,7 @@ public class InputMoveController : MonoBehaviour, IPointerDownHandler, IPointerU
 
             float distance = Vector3.Distance(rect.localPosition, Vector3.zero);
             float value = Mathf.Max(0, distance / m_maxSpeed);
-            playerMoveController?.Invoke(rect.localPosition.normalized * value);
+            playerMoveDirection = rect.localPosition.normalized * value;
         }
     }
 
@@ -124,5 +109,5 @@ public class InputMoveController : MonoBehaviour, IPointerDownHandler, IPointerU
         return false;
     }
 
-    
+
 }
