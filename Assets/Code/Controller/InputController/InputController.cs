@@ -28,6 +28,8 @@ public class InputController : MonoBehaviour
     [SerializeField]
     private Button m_btnE;
     [SerializeField]
+    private Button m_btnShoot;
+    [SerializeField]
     private Button m_btnSetting;
 
     private bool m_isDeath = false;
@@ -47,6 +49,7 @@ public class InputController : MonoBehaviour
         {
             UIController.Instance.Open<GameEndPopup>("GameEndPopup", UILevel.PanelLevel);
         });
+        m_btnShoot.onClick.AddListener(BtnShoot_OnClick);
     }
 
     private void OnDestroy()
@@ -101,6 +104,7 @@ public class InputController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape)) UIController.Instance.Open<QuitGame>("QuitGame", UILevel.PanelLevel);
         if (Input.GetKeyDown(KeyCode.E) && m_colliders != null) PickE();
+        if (Input.GetKeyDown(KeyCode.F)) PlayerController.Instance.ShootBullet();
     }
     private void BtnE_OnClick()
     {
@@ -129,6 +133,11 @@ public class InputController : MonoBehaviour
     private void BtnJump_OnClick()
     {
         m_inputMoveController.JumpSpace();
+    }
+
+    private void BtnShoot_OnClick()
+    {
+        PlayerController.Instance.ShootBullet();
     }
 
 

@@ -9,22 +9,31 @@ public class SliderValueAnimation : MonoBehaviour
 
     private float m_targetValue;
 
+    private float m_difference;
+
 
     private void Awake()
     {
-        m_slider = GetComponent<Slider>();
+        if (m_slider == null)
+            m_slider = GetComponent<Slider>();
+    }
+
+    public void SetMaxAndMinValue(float max, float min)
+    {
+        if (m_slider == null) m_slider = GetComponent<Slider>();
+        m_slider.maxValue = max;
+        m_slider.minValue = min;
     }
 
     public void SetTargetValue(float value)
     {
         m_targetValue = value;
+        m_difference = m_targetValue - m_slider.value;
     }
 
     private void Update()
     {
-        float v = Mathf.Abs(m_targetValue - m_slider.value);
-        float a = Mathf.Pow(v, 1.8f) + (v < 0.02f ? 0.02f - v : v > 0.03 ? v : 0.02f) + 0.005f;
-        if (v < 0.005f) a = 1.0f;
-        m_slider.value = Mathf.Lerp(m_slider.value, m_targetValue, a);
+        float value = m_slider.value + (m_difference / 0.45f) * Time.deltaTime;
+        m_slider.value = value > m_slider.maxValue ? m_slider.maxValue : value < m_slider.minValue ? m_slider.minValue : value;
     }
 }

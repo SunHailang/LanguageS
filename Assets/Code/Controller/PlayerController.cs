@@ -11,6 +11,10 @@ public class PlayerController : MonoBehaviour
 
     private CharacterController m_controller;
 
+    [SerializeField]
+    private Transform m_shootPos;
+    private BulletAI m_bulletPrefab;
+
     private PlayerAnimationController m_animationController;
 
     private Vector3 playerVelocity;
@@ -31,6 +35,7 @@ public class PlayerController : MonoBehaviour
     private bool m_isRunning = false;
     private float m_angleOffset = 0;
 
+    private float m_shootTime = 0.0f;
 
     private void Awake()
     {
@@ -50,8 +55,7 @@ public class PlayerController : MonoBehaviour
     public void Rebirth()
     {
         m_isDeath = false;
-        PlayerData.Instance.SetPlayerData(ReplyType.Blood, 1.0f);
-        PlayerData.Instance.SetPlayerData(ReplyType.Magic, 1.0f);
+        PlayerData.Instance.Rebirth();
         EventManager<Events>.Instance.TriggerEvent(Events.PlayerLifeState, !m_isDeath);
     }
 
@@ -85,8 +89,25 @@ public class PlayerController : MonoBehaviour
         return transform.rotation.eulerAngles;
     }
 
+    public void ShootBullet()
+    {
+        if (m_shootTime >= PlayerData.Instance.playerShootSpeed)
+        {
+            float hurt = UnityEngine.Random.Range(20f, 40f);
+            float speed = UnityEngine.Random.Range(5f, 7f);
+            BulletController.Instance.CreateBullet(m_shootPos.position, "Player", hurt, speed, m_shootPos.forward);
+            m_shootTime = 0.0f;
+        }
+    }
+
 
     private void Update()
+    {
+        m_shootTime += Time.deltaTime;
+        PlayerData.Instance.OnUpdate(Time.deltaTime);
+    }
+
+    private void FixedUpdate()
     {
         bool jump = false;
         groundedPlayer = m_controller.isGrounded;
@@ -102,19 +123,19 @@ public class PlayerController : MonoBehaviour
             playerVelocity.y += Mathf.Sqrt(jumpHeight * jumpValue * gravityValue);
             jump = true;
             // magic
-            PlayerData.Instance.SetPlayerData(ReplyType.Magic, -0.1f);
+            PlayerData.Instance.SetPlayerData(ReplyType.Magic, -10f);
         }
         m_movePlayer.y = 0;
 
         if (m_isRunning)
         {
             //transform.position += m_movePlayer * playerSpeed * Time.deltaTime;
-            m_controller.Move(m_movePlayer.normalized * playerSpeed * Time.deltaTime);
+            m_controller.Move(m_movePlayer.normalized * playerSpeed * Time.fixedDeltaTime);
         }
 
         m_animationController.PlayAnimationEvent(m_isRunning, jump);
 
-        playerVelocity.y += gravityValue * Time.deltaTime;
-        m_controller.Move(playerVelocity * Time.deltaTime);
+        playerVelocity.y += gravityValue * Time.fixedDeltaTime;
+        m_controller.Move(playerVelocity * Time.fixedDeltaTime);
     }
 }

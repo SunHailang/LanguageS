@@ -19,6 +19,8 @@ public class InputMoveController : MonoBehaviour, IPointerDownHandler, IPointerU
     private bool m_jump = false;
     private bool m_isDeath = false;
 
+    private bool m_startDrag = false;
+
     private void OnEnable()
     {
         m_inputKnob.anchoredPosition = Vector3.zero;
@@ -28,6 +30,13 @@ public class InputMoveController : MonoBehaviour, IPointerDownHandler, IPointerU
     {
         if (!IsDeath())
         {
+            if (!m_startDrag)
+            {
+                playerMoveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+                //playerMoveDirection.x += Input.GetAxis("Horizontal");
+                //playerMoveDirection.y += Input.GetAxis("Vertical");
+            }
+
             if (Input.GetButtonDown("Jump")) JumpSpace();
             if (m_jump)
                 playerMoveDirection.z = 1.0f;
@@ -46,11 +55,13 @@ public class InputMoveController : MonoBehaviour, IPointerDownHandler, IPointerU
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        m_startDrag = true;
         SetPosition(eventData, m_inputKnob);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        m_startDrag = false;
         m_inputKnob.localPosition = Vector3.zero;
 
         playerMoveDirection = Vector3.zero;
@@ -58,16 +69,19 @@ public class InputMoveController : MonoBehaviour, IPointerDownHandler, IPointerU
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        m_startDrag = true;
         SetPosition(eventData, m_inputKnob);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
+        m_startDrag = true;
         SetPosition(eventData, m_inputKnob);
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        m_startDrag = false;
         m_inputKnob.localPosition = Vector3.zero;
 
         playerMoveDirection = Vector3.zero;

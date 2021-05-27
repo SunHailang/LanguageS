@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,33 +7,80 @@ public class EnemyAI : MonoBehaviour
 {
     [SerializeField]
     private PlayerAnimationController m_animationController;
+    [Space]
+    [SerializeField]
+    private Transform m_shootPos;
+
+    private BulletAI m_bulletPrefab;
 
     private float m_speed = 0.0f;
+    private float m_hurt = 0.0f;
+
+    private float m_hurtTime = 0.0f;
+    private float m_hurtInterval = 0.0f;
 
     private bool m_move = true;
 
     Vector3 m_moveDir = Vector3.zero;
 
+    private bool m_init = false;
+
     private void Awake()
     {
-        //m_animationController.GetComponentInChildren<PlayerAnimationController>();
+        // Register
+        EventManager<Events>.Instance.RegisterEvent(Events.PlayerLifeState, OnPlayerLifeState);
+    }
+
+    private void OnDestroy()
+    {
+        // Deregister
+        EventManager<Events>.Instance.DeregisterEvent(Events.PlayerLifeState, OnPlayerLifeState);
+    }
+
+    private void OnPlayerLifeState(Events arg1, object[] arg2)
+    {
+        bool death = !Convert.ToBoolean(arg2[0]);
+        if (!death)
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void Init()
     {
-        m_speed = UnityEngine.Random.Range(3.0f, 10.0f);
+        m_speed = UnityEngine.Random.Range(5.0f, 8.0f);
+        m_hurt = UnityEngine.Random.Range(20f, 40f);
+
+        m_hurtTime = 0.0f;
+        m_hurtInterval = UnityEngine.Random.Range(6.0f, 10.0f);
+
+        m_init = true;
     }
 
     private void Update()
     {
-        if (PlayerController.Instance.IsDeath) return;
+        if (!m_init || PlayerController.Instance.IsDeath) return;
+        if (m_hurtTime >= m_hurtInterval)
+        {
+            // Short
+            Shoot();
+            m_hurtTime = 0.0f;
+        }
+        m_hurtTime += Time.deltaTime;
+    }
 
+    private void Shoot()
+    {
+        float hurt = m_hurt;
+        float speed = UnityEngine.Random.Range(5.0f, 10.0f);
+        Vector3 dir = (PlayerController.Instance.transform.position - transform.position).normalized;
+        BulletController.Instance.CreateBullet(m_shootPos.position, "Enemy", hurt, speed, dir);
     }
 
     private void FixedUpdate()
     {
         if (PlayerController.Instance.IsDeath) return;
-        float dis = Vector3.Distance(PlayerController.Instance.transform.position, transform.position);
+        //float dis = Vector3.Distance(PlayerController.Instance.transform.position, transform.position);
         if (m_move)
         {
             Vector3 dir = PlayerController.Instance.transform.position - transform.position;
@@ -61,10 +109,8 @@ public class EnemyAI : MonoBehaviour
         {
             switch (other.tag)
             {
-                case "Enemy":
-                    Destroy(gameObject);
-                    break;
                 case "Mushroom":
+                    PlayerData.Instance.SetScore(1);
                     Destroy(other.gameObject);
                     Destroy(gameObject);
                     break;
@@ -72,7 +118,6 @@ public class EnemyAI : MonoBehaviour
                     m_move = false;
                     break;
             }
-
         }
     }
 
@@ -83,7 +128,7 @@ public class EnemyAI : MonoBehaviour
             switch (other.tag)
             {
                 case "Player":
-                    PlayerData.Instance.SetPlayerData(ReplyType.Blood, -Time.deltaTime / 100);
+                    PlayerData.Instance.SetPlayerData(ReplyType.Blood, -Time.deltaTime);
                     break;
             }
         }

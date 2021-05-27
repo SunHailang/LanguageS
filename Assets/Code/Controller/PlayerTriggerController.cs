@@ -23,12 +23,11 @@ public class PlayerTriggerController : MonoBehaviour
                     EventManager<Events>.Instance.TriggerEvent(Events.HurtType, actions);
                     Destroy(other.gameObject);
                     break;
+                case "Enemy":
+                    // death
+                    PlayerData.Instance.SetPlayerData(ReplyType.Blood, -PlayerData.Instance.playerMaxBlood);
+                    break;
             }
-            //if (other.gameObject.layer == 8)
-            //{
-            //    float dis = Vector3.Distance(other.gameObject.transform.position, transform.position);
-            //    Debug.Log($"Dis: {dis}");
-            //}
         }
     }
 
