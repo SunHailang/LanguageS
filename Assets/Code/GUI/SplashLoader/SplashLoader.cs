@@ -8,11 +8,11 @@ using UnityEngine.Video;
 public class SplashLoader : MonoBehaviour
 {
     [SerializeField]
-    private Transform m_video;
+    private Transform m_video = null;
     [SerializeField]
-    private RectTransform m_imageBG;
+    private RectTransform m_imageBG = null;
     [SerializeField]
-    private GameObject m_btnStart;
+    private GameObject m_btnStart = null;
 
     private Material m_imageMaterial;
 

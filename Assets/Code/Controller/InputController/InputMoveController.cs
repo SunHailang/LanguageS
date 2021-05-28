@@ -7,7 +7,7 @@ using UnityEngine.Events;
 public class InputMoveController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [SerializeField]
-    private RectTransform m_inputKnob;
+    private RectTransform m_inputKnob = null;
 
 
     public event System.Action<Vector3> playerMoveController;

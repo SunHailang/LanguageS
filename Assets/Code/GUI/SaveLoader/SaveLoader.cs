@@ -7,11 +7,11 @@ using UnityEngine.UI;
 public class SaveLoader : MonoBehaviour
 {
     [SerializeField]
-    private RectTransform m_imageBG;
+    private RectTransform m_imageBG = null;
     [SerializeField]
-    private Slider m_slider;
+    private Slider m_slider = null;
     [SerializeField]
-    private TextMeshProUGUI m_sliderText;
+    private TextMeshProUGUI m_sliderText = null;
 
     private static readonly float m_staWidth = 1920.0f;
     private static readonly float m_staHeight = 1080.0f;

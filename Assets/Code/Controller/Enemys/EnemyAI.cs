@@ -6,10 +6,10 @@ using UnityEngine;
 public class EnemyAI : MonoBehaviour
 {
     [SerializeField]
-    private PlayerAnimationController m_animationController;
+    private PlayerAnimationController m_animationController = null;
     [Space]
     [SerializeField]
-    private Transform m_shootPos;
+    private Transform m_shootPos = null;
 
     private BulletAI m_bulletPrefab;
 
@@ -49,7 +49,7 @@ public class EnemyAI : MonoBehaviour
     public void Init()
     {
         m_speed = UnityEngine.Random.Range(5.0f, 8.0f);
-        m_hurt = UnityEngine.Random.Range(20f, 40f);
+        m_hurt = UnityEngine.Random.Range(120f, 140f);
 
         m_hurtTime = 0.0f;
         m_hurtInterval = UnityEngine.Random.Range(6.0f, 10.0f);
@@ -72,7 +72,7 @@ public class EnemyAI : MonoBehaviour
     private void Shoot()
     {
         float hurt = m_hurt;
-        float speed = UnityEngine.Random.Range(5.0f, 10.0f);
+        float speed = UnityEngine.Random.Range(12.0f, 16.0f);
         Vector3 dir = (PlayerController.Instance.transform.position - transform.position).normalized;
         BulletController.Instance.CreateBullet(m_shootPos.position, "Enemy", hurt, speed, dir);
     }

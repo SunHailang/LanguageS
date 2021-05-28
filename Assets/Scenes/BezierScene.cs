@@ -5,7 +5,7 @@ using UnityEngine;
 public class BezierScene : MonoBehaviour
 {
     [SerializeField]
-    private Transform[] m_tras;
+    private Transform[] m_tras = null;
 
 
     Vector3[] m_points;

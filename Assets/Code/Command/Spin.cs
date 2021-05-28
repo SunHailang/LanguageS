@@ -11,6 +11,6 @@ public class Spin : MonoBehaviour
 
     private void Update()
     {
-        transform.Rotate(m_direction * Time.deltaTime);
+        transform.Rotate(m_direction * Time.unscaledDeltaTime);
     }
 }

@@ -12,8 +12,7 @@ public class PlayerController : MonoBehaviour
     private CharacterController m_controller;
 
     [SerializeField]
-    private Transform m_shootPos;
-    private BulletAI m_bulletPrefab;
+    private Transform m_shootPos = null;
 
     private PlayerAnimationController m_animationController;
 
@@ -29,13 +28,12 @@ public class PlayerController : MonoBehaviour
 
     private SkillActionType m_playerSkill = SkillActionType.None;
 
-    private bool m_isDeath = false;
-    public bool IsDeath { get { return m_isDeath; } }
-
     private bool m_isRunning = false;
     private float m_angleOffset = 0;
 
     private float m_shootTime = 0.0f;
+
+    public bool IsDeath { get => App.Instance.IsDeath; }
 
     private void Awake()
     {
@@ -49,19 +47,19 @@ public class PlayerController : MonoBehaviour
 
     public void Death()
     {
-        m_isDeath = true;
-        EventManager<Events>.Instance.TriggerEvent(Events.PlayerLifeState, !m_isDeath);
+        App.Instance.IsDeath = true;
+        EventManager<Events>.Instance.TriggerEvent(Events.PlayerLifeState, !App.Instance.IsDeath);
     }
     public void Rebirth()
     {
-        m_isDeath = false;
+        App.Instance.IsDeath = false;
         PlayerData.Instance.Rebirth();
-        EventManager<Events>.Instance.TriggerEvent(Events.PlayerLifeState, !m_isDeath);
+        EventManager<Events>.Instance.TriggerEvent(Events.PlayerLifeState, !App.Instance.IsDeath);
     }
 
     public void SetPlayerMove(Vector3 direction)
     {
-        if (m_playerSkill != SkillActionType.None || m_isDeath)
+        if (m_playerSkill != SkillActionType.None || App.Instance.IsDeath)
         {
             direction = Vector3.zero;
         }
@@ -94,7 +92,7 @@ public class PlayerController : MonoBehaviour
         if (m_shootTime >= PlayerData.Instance.playerShootSpeed)
         {
             float hurt = UnityEngine.Random.Range(20f, 40f);
-            float speed = UnityEngine.Random.Range(5f, 7f);
+            float speed = UnityEngine.Random.Range(12f, 16f);
             BulletController.Instance.CreateBullet(m_shootPos.position, "Player", hurt, speed, m_shootPos.forward);
             m_shootTime = 0.0f;
         }

@@ -33,7 +33,7 @@ public class SliderValueAnimation : MonoBehaviour
 
     private void Update()
     {
-        float value = m_slider.value + (m_difference / 0.45f) * Time.deltaTime;
+        float value = m_slider.value + (m_difference / 0.45f) * Time.unscaledDeltaTime;
         m_slider.value = value > m_slider.maxValue ? m_slider.maxValue : value < m_slider.minValue ? m_slider.minValue : value;
     }
 }

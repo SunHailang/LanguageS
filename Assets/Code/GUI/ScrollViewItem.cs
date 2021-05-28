@@ -6,7 +6,7 @@ using TMPro;
 public class ScrollViewItem : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI m_text;
+    private TextMeshProUGUI m_text = null;
 
     [HideInInspector]
     public int indexValue = 0;

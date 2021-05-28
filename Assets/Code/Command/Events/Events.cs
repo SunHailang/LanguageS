@@ -11,3 +11,10 @@ public enum Events
     PickType,
     HurtType,
 }
+
+
+public enum VolumeEvents
+{
+    VolumeBG,
+    VolumeVideo,
+}

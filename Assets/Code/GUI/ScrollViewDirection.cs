@@ -6,11 +6,11 @@ public class ScrollViewDirection : MonoBehaviour
 {
 
     [SerializeField]
-    private RectTransform m_scrollview;
+    private RectTransform m_scrollview =null;
     [SerializeField]
-    private RectTransform m_scrollviewContent;
+    private RectTransform m_scrollviewContent = null;
     [SerializeField]
-    private GameObject m_directionPrefab;
+    private GameObject m_directionPrefab = null;
 
 
     private List<int> m_directionItems = new List<int>();

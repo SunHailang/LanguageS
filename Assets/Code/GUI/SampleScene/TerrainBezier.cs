@@ -8,11 +8,11 @@ public class TerrainBezier : MonoBehaviour
 {
 
     [SerializeField]
-    private Transform m_bezierHomeTrans;
+    private Transform m_bezierHomeTrans = null;
     [SerializeField]
-    private Transform[] m_bezierHome;
+    private Transform[] m_bezierHome = null;
 
-    private Vector3[] m_bezierHomeVecs;
+    private Vector3[] m_bezierHomeVecs = null;
 
     // LineRenderer 
     private LineRenderer lineRenderer;

@@ -48,7 +48,7 @@ public class BulletAI : MonoBehaviour
                 case "Player":
                     if (this.Origin == "Enemy")
                     {
-                        PlayerData.Instance.SetPlayerData(ReplyType.Blood, m_hurt);
+                        PlayerData.Instance.SetPlayerData(ReplyType.Blood, -m_hurt);
                         DestroySelf(other.ClosestPoint(transform.position));
                     }
                     break;

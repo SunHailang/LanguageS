@@ -8,14 +8,14 @@ public class ScrollViewLoopController : MonoBehaviour, IBeginDragHandler, IDragH
 {
     private List<int> m_itemDatas = new List<int>();
     [SerializeField]
-    private ScrollRect m_scrollview;
+    private ScrollRect m_scrollview = null;
     [SerializeField]
-    private RectTransform m_scrollviewViewport;
+    private RectTransform m_scrollviewViewport = null;
     [SerializeField]
-    private Transform m_scrollviewContent;
+    private Transform m_scrollviewContent = null;
 
     [SerializeField]
-    private RectTransform m_prefab;
+    private RectTransform m_prefab = null;
 
     private List<ScrollViewItem> m_items = new List<ScrollViewItem>();
 

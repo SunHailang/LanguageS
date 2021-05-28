@@ -8,12 +8,12 @@ using UnityEngine.UI;
 public class PlayerDataUI : MonoBehaviour
 {
     [SerializeField]
-    private SliderValueAnimation m_sliderBlood;
+    private SliderValueAnimation m_sliderBlood = null;
     [SerializeField]
-    private SliderValueAnimation m_sliderMagic;
+    private SliderValueAnimation m_sliderMagic = null;
     [Space]
     [SerializeField]
-    private TextMeshProUGUI m_score;
+    private TextMeshProUGUI m_score = null;
 
 
     private void Awake()

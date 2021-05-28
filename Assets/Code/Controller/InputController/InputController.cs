@@ -9,28 +9,28 @@ using System;
 public class InputController : MonoBehaviour
 {
     [SerializeField]
-    private InputMoveController m_inputMoveController;
+    private InputMoveController m_inputMoveController = null;
     [SerializeField]
-    private InputDirectionController m_inputDirectionController;
+    private InputDirectionController m_inputDirectionController = null;
 
     [SerializeField]
-    private ScrollViewDirection m_scrollviewDir;
+    private ScrollViewDirection m_scrollviewDir = null;
 
 
     [SerializeField]
-    private TextMeshProUGUI m_directionText;
+    private TextMeshProUGUI m_directionText = null;
     [SerializeField]
-    private Transform m_allowDirection;
+    private Transform m_allowDirection = null;
     [SerializeField]
-    private Button m_btnJump;
+    private Button m_btnJump = null;
     [SerializeField]
-    private TextMeshProUGUI m_pickE;
+    private TextMeshProUGUI m_pickE = null;
     [SerializeField]
-    private Button m_btnE;
+    private Button m_btnE = null;
     [SerializeField]
-    private Button m_btnShoot;
+    private Button m_btnShoot = null;
     [SerializeField]
-    private Button m_btnSetting;
+    private Button m_btnSetting = null;
 
     private bool m_isDeath = false;
 

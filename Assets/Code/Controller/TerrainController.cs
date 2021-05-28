@@ -6,26 +6,16 @@ using UnityEngine.Events;
 public class TerrainController : MonoBehaviour
 {
     [SerializeField]
-    private Transform m_mushroomsParent;
-    [SerializeField]
+    private Transform m_mushroomsParent = null;
+
     private Transform m_mushroomsPrefab;
-    [SerializeField]
+
     private Transform m_flowersPrefab;
-    [SerializeField]
+
     private Transform m_flowersLowPrefab;
 
-    [SerializeField]
-    private MeshRenderer m_meshRender;
-
-    private Material m_camMaterial;
 
 
-    private void Awake()
-    {
-        m_camMaterial = m_meshRender.material;
-
-        //StartCoroutine(ShowWebCamTexture());
-    }
 
     private IEnumerator ShowWebCamTexture()
     {
@@ -39,7 +29,7 @@ public class TerrainController : MonoBehaviour
                 WebCamTexture camTexture = new WebCamTexture(1920, 1080, 60);
                 camTexture.deviceName = devices[0].name;
 
-                m_camMaterial.mainTexture = camTexture;
+                //m_camMaterial.mainTexture = camTexture;
 
                 camTexture.Play();
             }
@@ -58,6 +48,7 @@ public class TerrainController : MonoBehaviour
 
     private void Start()
     {
+        if (m_mushroomsPrefab == null) m_mushroomsPrefab = ResourcesManager.LoadEnemys<Transform>("mushrooms");
         for (float i = -49; i < 49; i += 10.5f)
         {
             for (float j = -40; j < 40; j += 8.8f)
@@ -70,7 +61,7 @@ public class TerrainController : MonoBehaviour
                 trans.gameObject.name = $"mushroom{i + j}";
             }
         }
-
+        if (m_flowersPrefab == null) m_flowersPrefab = ResourcesManager.LoadEnemys<Transform>("flowers");
         for (float i = -49; i < 49; i += 8.5f)
         {
             for (float j = -40; j < 40; j += 5.8f)
@@ -85,7 +76,7 @@ public class TerrainController : MonoBehaviour
                 trans.gameObject.name = $"flowers{i + j}";
             }
         }
-
+        if (m_flowersLowPrefab == null) m_flowersLowPrefab = ResourcesManager.LoadEnemys<Transform>("flowersLow");
         for (float i = -49; i < 49; i += 5.5f)
         {
             for (float j = -40; j < 40; j += 3.8f)

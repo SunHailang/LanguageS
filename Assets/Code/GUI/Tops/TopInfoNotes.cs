@@ -4,7 +4,7 @@ using UnityEngine;
 public class TopInfoNotes : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI m_text;
+    private TextMeshProUGUI m_text = null;
 
     public void Configure(string data)
     {
