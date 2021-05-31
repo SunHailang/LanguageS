@@ -11,6 +11,14 @@ public class PlayerTriggerController : MonoBehaviour
         EventManager<Events>.Instance.TriggerEvent(Events.PickType, colliders);
     }
 
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit != null && hit.collider.tag == "Enemy")
+        {
+            PlayerData.Instance.SetPlayerData(ReplyType.Blood, -PlayerData.Instance.playerMaxBlood);
+        }
+    }
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -22,10 +30,6 @@ public class PlayerTriggerController : MonoBehaviour
                     ActionEvent[] actions = other.gameObject.GetComponents<ActionEvent>();
                     EventManager<Events>.Instance.TriggerEvent(Events.HurtType, actions);
                     Destroy(other.gameObject);
-                    break;
-                case "Enemy":
-                    // death
-                    PlayerData.Instance.SetPlayerData(ReplyType.Blood, -PlayerData.Instance.playerMaxBlood);
                     break;
             }
         }

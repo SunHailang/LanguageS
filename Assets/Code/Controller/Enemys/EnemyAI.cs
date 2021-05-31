@@ -9,6 +9,8 @@ public class EnemyAI : MonoBehaviour
     private PlayerAnimationController m_animationController = null;
     [Space]
     [SerializeField]
+    private CharacterController m_character = null;
+    [SerializeField]
     private Transform m_shootPos = null;
 
     private BulletAI m_bulletPrefab;
@@ -92,13 +94,22 @@ public class EnemyAI : MonoBehaviour
             }
             bool jump = false;
             dir.y = 0.0f;
-            transform.position += m_moveDir.normalized * Time.fixedDeltaTime * m_speed;
+            m_character.Move(m_moveDir.normalized * Time.fixedDeltaTime * m_speed);
+            //transform.position += ;
 
             m_animationController.PlayAnimationEvent(dir != Vector3.zero && m_speed > 0.0f, jump);
         }
         else
         {
             m_animationController.PlayAnimationEvent(false, false);
+        }
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit != null && hit.collider.tag == "Player")
+        {
+            PlayerData.Instance.SetPlayerData(ReplyType.Blood, -PlayerData.Instance.playerMaxBlood);
         }
     }
 
@@ -114,37 +125,18 @@ public class EnemyAI : MonoBehaviour
                     Destroy(other.gameObject);
                     Destroy(gameObject);
                     break;
-                case "Player":
-                    m_move = false;
-                    break;
             }
         }
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (other != null)
-        {
-            switch (other.tag)
-            {
-                case "Player":
-                    PlayerData.Instance.SetPlayerData(ReplyType.Blood, -Time.deltaTime);
-                    break;
-            }
-        }
+        
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other != null)
-        {
-            switch (other.tag)
-            {
-                case "Player":
-                    m_move = true;
-                    break;
-            }
-        }
+        
     }
 
 }

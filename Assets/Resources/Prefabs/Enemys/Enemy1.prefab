@@ -39,9 +39,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 210698923903205768}
-  - component: {fileID: 5437965328598983583}
   - component: {fileID: 3212436174415178385}
-  - component: {fileID: 5068535148414952480}
+  - component: {fileID: 6918008140259991657}
   m_Layer: 0
   m_Name: Enemy1
   m_TagString: Enemy
@@ -65,22 +64,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &5437965328598983583
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 210698923903205765}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &3212436174415178385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,21 +77,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_animationController: {fileID: 9181196571874230527}
+  m_character: {fileID: 6918008140259991657}
   m_shootPos: {fileID: 18614935}
---- !u!136 &5068535148414952480
-CapsuleCollider:
+--- !u!143 &6918008140259991657
+CharacterController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 210698923903205765}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.3
+  serializedVersion: 2
   m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.99, z: 0.12}
+  m_Radius: 0.3
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0.99, z: 0}
 --- !u!114 &9181196571874230527
 MonoBehaviour:
   m_ObjectHideFlags: 0
