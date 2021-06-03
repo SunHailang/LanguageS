@@ -92,16 +92,15 @@ public class EnemyAI : MonoBehaviour
                 m_moveDir.x = dir.x;
                 m_moveDir.z = dir.z;
             }
-            bool jump = false;
             dir.y = 0.0f;
             m_character.Move(m_moveDir.normalized * Time.fixedDeltaTime * m_speed);
             //transform.position += ;
 
-            m_animationController.PlayAnimationEvent(dir != Vector3.zero && m_speed > 0.0f, jump);
+            m_animationController.PlayAnimationRunning(dir != Vector3.zero && m_speed > 0.0f);
         }
         else
         {
-            m_animationController.PlayAnimationEvent(false, false);
+            m_animationController.PlayAnimationRunning(false);
         }
     }
 

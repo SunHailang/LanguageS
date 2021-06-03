@@ -117,12 +117,33 @@ public class SplashLoader : MonoBehaviour
         m_btnStart.SetActive(true);
     }
 
+    private SceneData m_nextScene = null;
+
     public void BtnStart_OnClick()
     {
-        SceneManager.LoadSceneAsync("SampleScene");
+        m_btnStart.SetActive(false);
 
-        //start = true;
-        //m_tTime = 0.0f;
+        App.Instance.Pause = true;
+        m_nextScene = new SceneData("SplashLoader", "SampleScene");
+        SceneController.Instance.SetNextScene(m_nextScene);
+
+        StartCoroutine(StartSaveLoader());
+    }
+
+    private IEnumerator StartSaveLoader()
+    {
+        yield return null;
+
+        AsyncOperation async = SceneManager.LoadSceneAsync("SaveLoader", LoadSceneMode.Additive);
+        while (!async.isDone)
+        {
+            yield return null;
+        }
+        yield return null;
+        yield return null;
+        SceneManager.UnloadSceneAsync("SplashLoader");
+
+        m_nextScene.SetStartNext();
     }
 
 }

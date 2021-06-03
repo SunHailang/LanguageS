@@ -24,6 +24,9 @@ public class PlayerController : MonoBehaviour
     private float gravityValue = -9.8f;
     private float jumpValue = -2.8f;
 
+    [Range(1.0f, 2.0f)]
+    public float m_downSpeed = 1.5f;
+
     private Vector3 m_movePlayer = Vector3.zero;
 
     private SkillActionType m_playerSkill = SkillActionType.None;
@@ -105,14 +108,18 @@ public class PlayerController : MonoBehaviour
         PlayerData.Instance.OnUpdate(Time.deltaTime);
     }
 
+
+
     private void FixedUpdate()
     {
         bool jump = false;
+
         groundedPlayer = m_controller.isGrounded;
         if (groundedPlayer && playerVelocity.y < 0)
         {
             jump = false;
             playerVelocity.y = 0f;
+            m_animationController.PlayAnimationJump(jump);
         }
 
         // Changes the height position of the player..
@@ -122,6 +129,8 @@ public class PlayerController : MonoBehaviour
             jump = true;
             // magic
             PlayerData.Instance.SetPlayerData(ReplyType.Magic, -10f);
+
+            m_animationController.PlayAnimationJump(jump);
         }
         m_movePlayer.y = 0;
 
@@ -131,9 +140,9 @@ public class PlayerController : MonoBehaviour
             m_controller.Move(m_movePlayer.normalized * playerSpeed * Time.fixedDeltaTime);
         }
 
-        m_animationController.PlayAnimationEvent(m_isRunning, jump);
+        m_animationController.PlayAnimationRunning(m_isRunning);
 
-        playerVelocity.y += gravityValue * Time.fixedDeltaTime;
+        playerVelocity.y += gravityValue * Time.fixedDeltaTime * 1.785f;
         m_controller.Move(playerVelocity * Time.fixedDeltaTime);
     }
 }
