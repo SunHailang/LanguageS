@@ -9,6 +9,7 @@ public class PlayerAnimationController : MonoBehaviour
 
     private Vector3 m_forward = Vector3.forward;
 
+    private bool m_running = false;
 
     private void Awake()
     {
@@ -44,10 +45,11 @@ public class PlayerAnimationController : MonoBehaviour
 
     public void PlayAnimationRunning(bool running)
     {
-        if (running)
-            m_animator.SetInteger("IntSpeed", 1);
-        else
-            m_animator.SetInteger("IntSpeed", -1);
+        if (m_running != running)
+        {
+            m_running = running;
+            m_animator.SetInteger("IntSpeed", m_running ? 1 : -1);
+        }
     }
 
     public void PlayAnimationJump(bool jump)

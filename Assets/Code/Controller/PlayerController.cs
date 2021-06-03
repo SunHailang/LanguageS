@@ -112,33 +112,25 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        bool jump = false;
-
         groundedPlayer = m_controller.isGrounded;
         if (groundedPlayer && playerVelocity.y < 0)
         {
-            jump = false;
             playerVelocity.y = 0f;
-            m_animationController.PlayAnimationJump(jump);
+            m_animationController.PlayAnimationJump(false);
         }
 
         // Changes the height position of the player..
         if (m_movePlayer.y > 0 && groundedPlayer)
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * jumpValue * gravityValue);
-            jump = true;
             // magic
-            PlayerData.Instance.SetPlayerData(ReplyType.Magic, -10f);
+            PlayerData.Instance.SetPlayerData(ReplyType.Magic, -80f);
 
-            m_animationController.PlayAnimationJump(jump);
+            m_animationController.PlayAnimationJump(true);
         }
         m_movePlayer.y = 0;
 
-        if (m_isRunning)
-        {
-            //transform.position += m_movePlayer * playerSpeed * Time.deltaTime;
-            m_controller.Move(m_movePlayer.normalized * playerSpeed * Time.fixedDeltaTime);
-        }
+        if (m_isRunning) m_controller.Move(m_movePlayer.normalized * playerSpeed * Time.fixedDeltaTime);
 
         m_animationController.PlayAnimationRunning(m_isRunning);
 
